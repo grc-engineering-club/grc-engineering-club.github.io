@@ -22,7 +22,9 @@ location: City, Country
 # Social Links (optional)
 linkedin: https://linkedin.com/in/your-profile
 twitter: "@yourhandle"
+bluesky: yourname.bsky.social
 blog: https://your-website.com
+huggingface: your-username
 
 # Frameworks you work with (optional)
 frameworks:

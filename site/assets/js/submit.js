@@ -2,8 +2,18 @@
   'use strict';
 
   var REPO_OWNER = 'grc-engineering-club';
-  var REPO_NAME = 'awesome-grc-engineer-directory';
+  var REPO_NAME = 'grc-engineering-club.github.io';
   var MAX_URL_LENGTH = 7500;
+  var GH_USERNAME_RE = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/;
+
+  // Post-submission confirmation
+  if (window.location.search.indexOf('submitted=1') !== -1) {
+    var banner = document.createElement('div');
+    banner.className = 'success-banner';
+    banner.textContent = 'Your profile has been submitted successfully! It will appear on the site after review.';
+    var main = document.querySelector('main') || document.body;
+    main.insertBefore(banner, main.firstChild);
+  }
 
   // --- State ---
   var state = {
@@ -80,57 +90,41 @@
     });
   }
 
-  // Custom specialization
-  var addSpecBtn = $('#add-custom-specialization');
-  var customSpecInput = $('#custom-specialization');
-  if (addSpecBtn) {
-    addSpecBtn.addEventListener('click', addCustomSpecialization);
-    customSpecInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { e.preventDefault(); addCustomSpecialization(); }
-    });
-  }
-
-  function addCustomSpecialization() {
-    var val = customSpecInput.value.trim();
+  // Custom chip helper (shared by specializations & languages)
+  function addCustomChip(inputEl, containerId, fieldName) {
+    var val = inputEl.value.trim();
     if (!val) return;
-    var container = $('#chips-specializations');
-    // Check for duplicate
+    var container = $(containerId);
     var existing = container.querySelector('.chip[data-value="' + CSS.escape(val) + '"]');
-    if (existing) { existing.classList.add('active'); customSpecInput.value = ''; syncChips(container, 'specializations'); return; }
+    if (existing) { existing.classList.add('active'); inputEl.value = ''; syncChips(container, fieldName); return; }
     var chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'chip active';
     chip.dataset.value = val;
     chip.textContent = val;
     container.appendChild(chip);
-    customSpecInput.value = '';
-    syncChips(container, 'specializations');
+    inputEl.value = '';
+    syncChips(container, fieldName);
+  }
+
+  // Custom specialization
+  var addSpecBtn = $('#add-custom-specialization');
+  var customSpecInput = $('#custom-specialization');
+  if (addSpecBtn) {
+    addSpecBtn.addEventListener('click', function () { addCustomChip(customSpecInput, '#chips-specializations', 'specializations'); });
+    customSpecInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); addCustomChip(customSpecInput, '#chips-specializations', 'specializations'); }
+    });
   }
 
   // Custom language
   var addLangBtn = $('#add-custom-language');
   var customLangInput = $('#custom-language');
   if (addLangBtn) {
-    addLangBtn.addEventListener('click', addCustomLanguage);
+    addLangBtn.addEventListener('click', function () { addCustomChip(customLangInput, '#chips-languages', 'languages'); });
     customLangInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { e.preventDefault(); addCustomLanguage(); }
+      if (e.key === 'Enter') { e.preventDefault(); addCustomChip(customLangInput, '#chips-languages', 'languages'); }
     });
-  }
-
-  function addCustomLanguage() {
-    var val = customLangInput.value.trim();
-    if (!val) return;
-    var container = $('#chips-languages');
-    var existing = container.querySelector('.chip[data-value="' + CSS.escape(val) + '"]');
-    if (existing) { existing.classList.add('active'); customLangInput.value = ''; syncChips(container, 'languages'); return; }
-    var chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'chip active';
-    chip.dataset.value = val;
-    chip.textContent = val;
-    container.appendChild(chip);
-    customLangInput.value = '';
-    syncChips(container, 'languages');
   }
 
   // --- Tag input (certifications) ---
@@ -156,7 +150,12 @@
     state.certifications.forEach(function (cert, i) {
       var span = document.createElement('span');
       span.className = 'tag tag-outline tag-removable';
-      span.innerHTML = cert + ' <button type="button" data-remove-cert="' + i + '">&times;</button>';
+      span.textContent = cert + ' ';
+      var removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.dataset.removeCert = i;
+      removeBtn.innerHTML = '&times;';
+      span.appendChild(removeBtn);
       certTagsEl.appendChild(span);
     });
   }
@@ -213,7 +212,7 @@
 
   githubInput && githubInput.addEventListener('blur', function () {
     var username = githubInput.value.trim();
-    if (!username || !/^[a-zA-Z0-9\-]+$/.test(username)) {
+    if (!username || !GH_USERNAME_RE.test(username)) {
       avatarPreview.hidden = true;
       return;
     }
@@ -242,7 +241,7 @@
     if (step === 1) {
       var gh = githubInput.value.trim();
       if (!gh) { setError('github', 'GitHub username is required.'); valid = false; }
-      else if (!/^[a-zA-Z0-9\-]+$/.test(gh)) { setError('github', 'Only letters, numbers, and hyphens allowed.'); valid = false; }
+      else if (!GH_USERNAME_RE.test(gh)) { setError('github', 'Invalid GitHub username. Must be 1-39 chars, alphanumeric or hyphens, no leading/trailing hyphens.'); valid = false; }
       var name = $('#field-name').value.trim();
       if (!name) { setError('name', 'Name is required.'); valid = false; }
       if (state.specializations.length === 0) { setError('specializations', 'Select at least one specialization.'); valid = false; }
@@ -282,7 +281,9 @@
     if (d.location) lines.push('location: "' + escYaml(d.location) + '"');
     if (d.linkedin) lines.push('linkedin: "' + escYaml(d.linkedin) + '"');
     if (d.twitter) lines.push('twitter: "' + escYaml(d.twitter) + '"');
+    if (d.bluesky) lines.push('bluesky: "' + escYaml(d.bluesky) + '"');
     if (d.blog) lines.push('blog: "' + escYaml(d.blog) + '"');
+    if (d.huggingface) lines.push('huggingface: "' + escYaml(d.huggingface) + '"');
 
     if (d.frameworks.length) {
       lines.push('frameworks:');
@@ -347,7 +348,9 @@
       location: ($('#field-location').value || '').trim(),
       linkedin: ($('#field-linkedin').value || '').trim(),
       twitter: ($('#field-twitter').value || '').trim(),
+      bluesky: ($('#field-bluesky').value || '').trim(),
       blog: ($('#field-blog').value || '').trim(),
+      huggingface: ($('#field-huggingface').value || '').trim(),
       frameworks: state.frameworks.slice(),
       languages: state.languages.slice(),
       certifications: state.certifications.slice(),
@@ -373,6 +376,8 @@
     var socials = [];
     if (d.linkedin) socials.push('<a href="' + escHtml(d.linkedin) + '">LinkedIn</a>');
     if (d.twitter) socials.push('<a href="https://x.com/' + escHtml(d.twitter.replace(/^@/, '')) + '">Twitter</a>');
+    if (d.bluesky) socials.push('<a href="https://bsky.app/profile/' + escHtml(d.bluesky) + '">Bluesky</a>');
+    if (d.huggingface) socials.push('<a href="https://huggingface.co/' + escHtml(d.huggingface) + '">Hugging Face</a>');
     if (d.blog) socials.push('<a href="' + escHtml(d.blog) + '">Blog</a>');
     socials.push('<a href="https://github.com/' + escHtml(d.github) + '">GitHub</a>');
     html += '<div class="profile-socials">' + socials.join('') + '</div>';
@@ -453,6 +458,10 @@
 
     if (fullUrl.length <= MAX_URL_LENGTH) {
       window.open(fullUrl, '_blank');
+      // Mark current page as submitted so returning shows success
+      if (window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname + '?submitted=1');
+      }
     } else {
       // Clipboard fallback
       navigator.clipboard.writeText(markdown).then(function () {
@@ -488,6 +497,6 @@
   }
 
   function escYaml(s) {
-    return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
   }
 })();

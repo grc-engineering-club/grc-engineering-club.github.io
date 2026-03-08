@@ -1,6 +1,28 @@
 ---
 layout: layouts/base.njk
 ---
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": {{ name | dump | safe }},
+  "jobTitle": {{ (title or '') | dump | safe }},
+  {% if company %}"worksFor": { "@type": "Organization", "name": {{ company | dump | safe }} },{% endif %}
+  {% if location %}"address": { "@type": "PostalAddress", "addressLocality": {{ location | dump | safe }} },{% endif %}
+  "url": "https://grc-engineering-club.github.io/engineers/{{ github }}/",
+  "image": "https://github.com/{{ github }}.png"
+}
+</script>
+{% set socialData = {
+  github: github,
+  linkedin: linkedin,
+  twitter: twitter,
+  bluesky: bluesky,
+  huggingface: huggingface,
+  blog: blog,
+  website: website,
+  portfolio: portfolio
+} %}
 <div class="profile">
   <div class="profile-back">
     <a href="/">&larr; Back to directory</a>
@@ -21,14 +43,24 @@ layout: layouts/base.njk
       {% if company %}<p class="profile-company">{{ company }}</p>{% endif %}
       {% if location %}<p class="profile-location">{{ location }}</p>{% endif %}
       <div class="profile-socials">
-        <a href="https://github.com/{{ github }}" target="_blank" rel="noopener" title="GitHub">GitHub</a>
-        {% if linkedin %}<a href="{{ linkedin }}" target="_blank" rel="noopener" title="LinkedIn">LinkedIn</a>{% endif %}
-        {% if blog %}<a href="{{ blog }}" target="_blank" rel="noopener" title="Blog">Blog</a>{% endif %}
-        {% if website %}<a href="{{ website }}" target="_blank" rel="noopener" title="Website">Website</a>{% endif %}
-        {% if portfolio %}<a href="{{ portfolio }}" target="_blank" rel="noopener" title="Portfolio">Portfolio</a>{% endif %}
+        {% for social in socials %}
+          {% set val = socialData[social.key] %}
+          {% if val or social.alwaysShow %}
+            {% set href = social | socialUrl(val or github) %}
+            <a href="{{ href }}" target="_blank" rel="noopener" title="{{ social.label }}">{{ social.label }}</a>
+          {% endif %}
+        {% endfor %}
       </div>
+      <button class="profile-share-btn" onclick="var b=this;navigator.clipboard.writeText(window.location.href).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Share Profile'},2000)})">Share Profile</button>
     </div>
   </div>
+
+  {% if available_for and available_for.length %}
+  <div class="profile-availability-banner">
+    <span class="label">Available for:</span>
+    {% for a in available_for %}<span class="tag tag-available">{{ a }}</span>{% endfor %}
+  </div>
+  {% endif %}
 
   <div class="profile-sections">
     {% if specializations and specializations.length %}
@@ -62,16 +94,7 @@ layout: layouts/base.njk
     <div class="profile-section">
       <h2>Certifications</h2>
       <div class="tags">
-        {% for c in certifications %}<span class="tag tag-outline">{{ c }}</span>{% endfor %}
-      </div>
-    </div>
-    {% endif %}
-
-    {% if available_for and available_for.length %}
-    <div class="profile-section">
-      <h2>Available For</h2>
-      <div class="tags">
-        {% for a in available_for %}<span class="tag tag-available">{{ a }}</span>{% endfor %}
+        {% for c in certifications %}<span class="tag tag-cert">{{ c }}</span>{% endfor %}
       </div>
     </div>
     {% endif %}
@@ -103,10 +126,19 @@ layout: layouts/base.njk
   <div class="profile-cta">
     <p>Interested in working with {{ name }}?</p>
     <div class="profile-cta-links">
-      {% if linkedin %}<a href="{{ linkedin }}" class="btn btn-primary" target="_blank" rel="noopener">Connect on LinkedIn</a>{% endif %}
-      {% if blog %}<a href="{{ blog }}" class="btn btn-outline" target="_blank" rel="noopener">Visit Blog</a>{% endif %}
-      {% if website %}<a href="{{ website }}" class="btn btn-outline" target="_blank" rel="noopener">Visit Website</a>{% endif %}
-      {% if portfolio %}<a href="{{ portfolio }}" class="btn btn-outline" target="_blank" rel="noopener">Visit Portfolio</a>{% endif %}
+      {% for social in socials %}
+        {% set val = socialData[social.key] %}
+        {% if val or social.alwaysShow %}
+          {% set href = social | socialUrl(val or github) %}
+          {% if social.ctaPrimary and val %}
+            <a href="{{ href }}" class="btn btn-primary" target="_blank" rel="noopener">{{ social.ctaLabel }}</a>
+          {% elif social.alwaysShow %}
+            <a href="{{ href }}" class="btn {% if not linkedin %}btn-primary{% else %}btn-outline{% endif %}" target="_blank" rel="noopener">{{ social.ctaLabel }}</a>
+          {% else %}
+            <a href="{{ href }}" class="btn btn-outline" target="_blank" rel="noopener">{{ social.ctaLabel }}</a>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
     </div>
   </div>
 </div>

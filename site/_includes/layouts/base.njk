@@ -7,7 +7,7 @@
   <meta name="description" content="{{ description or 'Find GRC engineers to hire — browse by specialization, framework expertise, and availability.' }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/site/assets/css/style.css">
   <script>
     (function() {
@@ -41,17 +41,14 @@
     </div>
   </footer>
 
-  <script defer src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@3/tsparticles.slim.bundle.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-
   <script>
     (function() {
       var btn = document.getElementById('theme-toggle');
-      function getEffectiveTheme() {
+      window.getEffectiveTheme = function() {
         var saved = document.documentElement.getAttribute('data-theme');
         if (saved) return saved;
         return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      }
+      };
       function updateIcon() {
         btn.textContent = getEffectiveTheme() === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
       }

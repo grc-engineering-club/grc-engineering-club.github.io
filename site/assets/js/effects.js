@@ -1,9 +1,7 @@
 (function () {
   /* ── Helpers ── */
   function isDark() {
-    var theme = document.documentElement.getAttribute("data-theme");
-    if (theme) return theme === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return window.getEffectiveTheme() === "dark";
   }
 
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -12,10 +10,10 @@
 
   /* ── Particles ── */
   function particleColor() {
-    return isDark() ? "#e8650a" : "#d45800";
+    return isDark() ? "#e8650a" : "#c24400";
   }
   function linkColor() {
-    return isDark() ? "rgba(232,101,10,0.15)" : "rgba(212,88,0,0.12)";
+    return isDark() ? "rgba(232,101,10,0.2)" : "rgba(180,60,0,0.12)";
   }
 
   function initParticles() {
@@ -27,27 +25,30 @@
         fullScreen: { enable: false },
         fpsLimit: 60,
         particles: {
-          number: { value: isMobile ? 15 : 40 },
+          number: { value: isMobile ? 18 : 45 },
           color: { value: particleColor() },
-          opacity: { value: 0.6 },
-          size: { value: { min: 1, max: 3 } },
+          opacity: { value: { min: 0.3, max: 0.6 } },
+          size: { value: { min: 1.5, max: 4 } },
           links: {
             enable: true,
             color: linkColor(),
-            distance: 150,
-            opacity: 0.4,
+            distance: 160,
+            opacity: 0.35,
             width: 1,
           },
           move: {
             enable: true,
-            speed: 0.6,
+            speed: 0.8,
             outModes: { default: "bounce" },
           },
         },
         interactivity: {
           events: {
-            onHover: { enable: false },
+            onHover: { enable: true, mode: "grab" },
             onClick: { enable: false },
+          },
+          modes: {
+            grab: { distance: 180, links: { opacity: 0.6 } },
           },
         },
         detectRetina: true,
@@ -65,8 +66,14 @@
   var chartInstances = [];
 
   var PALETTE = [
-    "#e8650a", "#f59e0b", "#d97706", "#b45309",
-    "#ea580c", "#c2410c", "#92400e", "#78350f",
+    "#e8650a",   // orange (brand primary)
+    "#f59e0b",   // amber
+    "#d4a017",   // gold (certs)
+    "#c2410c",   // dark orange
+    "#ea580c",   // orange-red
+    "#b45309",   // brown-orange
+    "#f97316",   // light orange
+    "#dc2626"    // red accent
   ];
 
   function chartTextColor() {

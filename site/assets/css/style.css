@@ -3,9 +3,11 @@
   --bg-primary: #0d0d0d;
   --bg-secondary: #1a1a1a;
   --bg-tertiary: #2a2a2a;
-  --brand-orange: #e8650a;
-  --brand-orange-10: rgba(232, 101, 10, 0.1);
-  --brand-orange-20: rgba(232, 101, 10, 0.2);
+  --brand-primary: #e8650a;
+  --brand-primary-10: rgba(232, 101, 10, 0.1);
+  --brand-primary-20: rgba(232, 101, 10, 0.2);
+  --cert-color: #d4a017;
+  --cert-bg: rgba(212, 160, 23, 0.1);
   --text-primary: #f5f5f5;
   --text-secondary: #a0a0a0;
   --text-white: #ffffff;
@@ -21,14 +23,18 @@
   --radius-sm: 6px;
 }
 
-/* Light theme */
+/* Light theme
+   NOTE: The [data-theme="light"] block and the @media (prefers-color-scheme: light)
+   block below MUST stay in sync. If you update one, update the other. */
 [data-theme="light"] {
   --bg-primary: #f8f8f8;
   --bg-secondary: #ffffff;
   --bg-tertiary: #eee;
-  --brand-orange: #d45800;
-  --brand-orange-10: rgba(212, 88, 0, 0.08);
-  --brand-orange-20: rgba(212, 88, 0, 0.15);
+  --brand-primary: #d45800;
+  --brand-primary-10: rgba(212, 88, 0, 0.08);
+  --brand-primary-20: rgba(212, 88, 0, 0.15);
+  --cert-color: #b8860b;
+  --cert-bg: rgba(184, 134, 11, 0.08);
   --text-primary: #1a1a1a;
   --text-secondary: #555;
   --text-white: #ffffff;
@@ -42,15 +48,18 @@
   --language-color: #0e7490;
 }
 
-/* Auto light for users with OS preference, unless manually overridden */
+/* Auto light for users with OS preference, unless manually overridden
+   NOTE: Must stay in sync with [data-theme="light"] above. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     --bg-primary: #f8f8f8;
     --bg-secondary: #ffffff;
     --bg-tertiary: #eee;
-    --brand-orange: #d45800;
-    --brand-orange-10: rgba(212, 88, 0, 0.08);
-    --brand-orange-20: rgba(212, 88, 0, 0.15);
+    --brand-primary: #d45800;
+    --brand-primary-10: rgba(212, 88, 0, 0.08);
+    --brand-primary-20: rgba(212, 88, 0, 0.15);
+    --cert-color: #b8860b;
+    --cert-bg: rgba(184, 134, 11, 0.08);
     --text-primary: #1a1a1a;
     --text-secondary: #555;
     --text-white: #ffffff;
@@ -65,12 +74,33 @@
   }
 }
 
+/* Heading typography */
+h1, h2, h3, h4, h5, h6,
+.nav-brand,
+.hero h1,
+.hero-stat-num {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+}
+
 html { overflow-x: hidden; }
 
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Focus-visible styles */
+*:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+.chip:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--brand-primary-10);
 }
 
 body {
@@ -95,11 +125,11 @@ body {
 }
 .theme-toggle:hover {
   color: var(--text-primary);
-  border-color: var(--brand-orange);
+  border-color: var(--brand-primary);
 }
 
 a {
-  color: var(--brand-orange);
+  color: var(--brand-primary);
   text-decoration: none;
 }
 a:hover {
@@ -131,7 +161,7 @@ a:hover {
 }
 .nav-brand:hover {
   text-decoration: none;
-  color: var(--brand-orange);
+  color: var(--brand-primary);
 }
 .nav-links {
   display: flex;
@@ -163,13 +193,13 @@ a:hover {
   opacity: 0.85;
 }
 .btn-primary {
-  background: var(--brand-orange);
+  background: var(--brand-primary);
   color: var(--text-white);
 }
 .btn-outline {
   background: transparent;
-  color: var(--brand-orange);
-  border: 2px solid var(--brand-orange);
+  color: var(--brand-primary);
+  border: 2px solid var(--brand-primary);
 }
 
 /* Hero */
@@ -195,11 +225,13 @@ a:hover {
   width: 100%;
   height: 100%;
   z-index: 0;
-  pointer-events: none;
 }
 .hero-content {
   position: relative;
   z-index: 1;
+  background: radial-gradient(ellipse at center, var(--bg-secondary) 0%, transparent 70%);
+  padding: 2rem;
+  border-radius: 1rem;
 }
 .hero-stats {
   display: flex;
@@ -217,7 +249,7 @@ a:hover {
 .hero-stat-num {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--brand-orange);
+  color: var(--brand-primary);
   font-variant-numeric: tabular-nums;
 }
 .hero h1 {
@@ -225,12 +257,30 @@ a:hover {
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 0.75rem;
+  text-shadow: 0 0 20px var(--bg-secondary), 0 0 40px var(--bg-secondary);
 }
 .hero-tagline {
   font-size: 1rem;
   color: var(--text-secondary);
   max-width: 600px;
   margin: 0 auto;
+}
+.hero-sub {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  margin: 0.25rem auto 0;
+}
+.success-banner {
+  background: var(--available-bg);
+  color: var(--available-color);
+  border: 1px solid var(--available-color);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  margin: 5rem auto 1rem;
+  max-width: 600px;
+  text-align: center;
+  font-weight: 500;
 }
 
 /* Insights */
@@ -294,7 +344,7 @@ a:hover {
 }
 .search-box input:focus {
   outline: none;
-  border-color: var(--brand-orange);
+  border-color: var(--brand-primary);
 }
 .filter-group {
   margin-bottom: 1rem;
@@ -324,13 +374,13 @@ a:hover {
   transition: all 0.15s;
 }
 .chip:hover {
-  border-color: var(--brand-orange);
+  border-color: var(--brand-primary);
   color: var(--text-primary);
 }
 .chip.active {
-  background: var(--brand-orange-20);
-  border-color: var(--brand-orange);
-  color: var(--brand-orange);
+  background: var(--brand-primary-20);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
 }
 
 /* Chip pop animation */
@@ -393,9 +443,9 @@ a:hover {
   transition: border-color 0.2s, transform 0.25s, box-shadow 0.25s, opacity 0.25s;
 }
 .card:hover {
-  border-color: var(--brand-orange);
+  border-color: var(--brand-primary);
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(232, 101, 10, 0.12);
+  box-shadow: 0 8px 24px var(--brand-primary-20);
 }
 
 /* Staggered entrance animation */
@@ -442,7 +492,7 @@ a:hover {
   color: var(--text-primary);
 }
 .card-name:hover {
-  color: var(--brand-orange);
+  color: var(--brand-primary);
 }
 .card-title {
   font-size: 0.8rem;
@@ -474,8 +524,13 @@ a:hover {
   font-family: 'IBM Plex Mono', monospace;
 }
 .tag-accent {
-  background: var(--brand-orange-10);
-  color: var(--brand-orange);
+  background: var(--brand-primary-10);
+  color: var(--brand-primary);
+}
+.tag-cert {
+  background: var(--cert-bg);
+  color: var(--cert-color);
+  border: 1px solid var(--cert-color);
 }
 .tag-outline {
   background: transparent;
@@ -497,16 +552,6 @@ a:hover {
   flex-wrap: wrap;
   gap: 0.375rem;
 }
-.badge-available {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  border-radius: 100px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  font-family: 'IBM Plex Mono', monospace;
-  background: var(--available-bg);
-  color: var(--available-color);
-}
 
 /* Card social links */
 .card-links {
@@ -521,7 +566,7 @@ a:hover {
   transition: color 0.15s;
 }
 .card-links a:hover {
-  color: var(--brand-orange);
+  color: var(--brand-primary);
 }
 
 /* Profile Page */
@@ -538,7 +583,7 @@ a:hover {
   color: var(--text-secondary);
 }
 .profile-back a:hover {
-  color: var(--brand-orange);
+  color: var(--brand-primary);
 }
 .profile-header {
   display: flex;
@@ -582,7 +627,42 @@ a:hover {
 .profile-socials a {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--brand-orange);
+  color: var(--brand-primary);
+}
+
+/* Profile availability banner */
+.profile-availability-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--available-bg);
+  border: 1px solid var(--available-color);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.profile-availability-banner .label {
+  font-weight: 600;
+  color: var(--available-color);
+  margin-right: 0.5rem;
+}
+
+.profile-share-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+}
+
+.profile-share-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--brand-primary);
 }
 
 /* Profile sections */
@@ -663,7 +743,7 @@ a:hover {
   margin-bottom: 0.35rem;
 }
 .profile-body a {
-  color: var(--brand-orange);
+  color: var(--brand-primary);
 }
 
 /* Profile CTA */
@@ -749,8 +829,8 @@ a:hover {
   transition: color 0.15s, border-color 0.15s;
 }
 .step-indicator .step.active {
-  color: var(--brand-orange);
-  border-bottom-color: var(--brand-orange);
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
 }
 .step-indicator .step.completed {
   color: var(--text-primary);
@@ -767,12 +847,12 @@ a:hover {
   margin-right: 0.35rem;
 }
 .step.active .step-num {
-  background: var(--brand-orange);
+  background: var(--brand-primary);
   color: var(--text-white);
 }
 .step.completed .step-num {
-  background: var(--brand-orange-20);
-  color: var(--brand-orange);
+  background: var(--brand-primary-20);
+  color: var(--brand-primary);
 }
 
 /* Form */
@@ -842,7 +922,7 @@ a:hover {
 .submit-form input:focus,
 .submit-form textarea:focus {
   outline: none;
-  border-color: var(--brand-orange);
+  border-color: var(--brand-primary);
 }
 .submit-form input::placeholder,
 .submit-form textarea::placeholder {
@@ -902,7 +982,7 @@ a:hover {
   border-radius: var(--radius-sm);
 }
 .tag-input-wrap:focus-within {
-  border-color: var(--brand-orange);
+  border-color: var(--brand-primary);
 }
 .tag-input-tags {
   display: contents;
@@ -1105,4 +1185,27 @@ a:hover {
     font-size: 0.7rem;
     margin-right: 0;
   }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .hero { background-size: 100% 100%; }
+  .card { opacity: 1; transform: none; }
+}
+
+/* Print stylesheet */
+@media print {
+  .nav, .footer, .hero-particles, .filters, .card-links, .profile-socials,
+  .profile-cta, #tsparticles, .theme-toggle, .btn-primary { display: none !important; }
+  body { background: white; color: black; }
+  .profile { max-width: 100%; }
+  .card-grid { display: block; }
+  .card { break-inside: avoid; border: 1px solid #ddd; margin-bottom: 1rem; }
+  a { color: inherit; text-decoration: underline; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
 }

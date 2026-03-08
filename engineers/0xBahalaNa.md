@@ -1,5 +1,4 @@
 ---
-# REQUIRED FIELDS
 name: Luigi Carpio
 github: 0xBahalaNa
 specializations:
@@ -9,22 +8,14 @@ specializations:
 languages:
   - Python
 
-# OPTIONAL FIELDS - Remove or leave blank if not applicable
-title: 
-company: 
-location: 
-
-# Social Links (optional)
 linkedin: https://linkedin.com/in/luigi-carpio
 blog: https://medium.com/@0xBahalaNa
 
-# Frameworks you work with (optional)
 frameworks:
   - CJIS
   - FedRAMP
   - NIST 800-53
 
-# Professional certifications (optional)
 certifications:
   - SSCP
   - CySA+
@@ -36,13 +27,10 @@ certifications:
   - ITIL 4 Foundations
   - Linux LPI Essentials
 
-# What you're available for (optional)
-# Options: mentoring, speaking, consulting, open-source, hiring, freelance, collaboration
 available_for:
   - open-source
   - collaboration
 
-# Notable projects (optional)
 projects:
   - name: AWS Compliance as Code
     url: https://github.com/0xBahalaNa/aws-compliance-as-code
@@ -67,7 +55,7 @@ projects:
 
 ## About Me
 
-I'm a GRC Engineer in the making. My background spans three years across Identity Governance and Administration (IGA) at a financial institution where I ran privileged access monitoring, RBAC analysis, and user access reviews, as well as technical support at public safety technology companies operating in CJIS and FedRAMP environments serving federal, state, and local agencies. 
+I'm a GRC Engineer in the making. My background spans three years across Identity Governance and Administration (IGA) at a financial institution where I ran privileged access monitoring, RBAC analysis, and user access reviews, as well as technical support at public safety technology companies operating in CJIS and FedRAMP environments serving federal, state, and local agencies.
 
 That combination shaped how I think about compliance: not as a checkbox exercise, but as something that should be engineered into systems. Working in a FedRAMP High environment every day while supporting customers who handle criminal justice information gave me a front-row seat to the operational reality of frameworks like CJIS, FedRAMP, and NIST 800-53: how controls actually work in production, not just on paper.
 

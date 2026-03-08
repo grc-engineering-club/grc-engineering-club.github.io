@@ -1,30 +1,8 @@
-# Awesome GRC Engineer Directory
+# GRC Engineering Club
 
-A community-driven directory of Governance, Risk, and Compliance (GRC) engineers. Find experts, connect with peers, and showcase your expertise.
+A community-driven directory of Governance, Risk, and Compliance (GRC) engineers.
 
-## Browse the Directory
-
-### By Specialization
-
-- **Cloud Security** - Securing cloud infrastructure and services
-- **Compliance Automation** - Automating compliance workflows and controls
-- **Risk Management** - Enterprise risk assessment and mitigation
-- **Security Governance** - Policy development and security program management
-- **Audit & Assurance** - Internal/external audit and control testing
-- **Third-Party Risk** - Vendor and supply chain risk management
-- **Privacy** - Data privacy and protection programs
-
-### By Framework
-
-- **SOC 2** - Service Organization Control
-- **FedRAMP** - Federal Risk and Authorization Management Program
-- **ISO 27001** - Information Security Management
-- **HIPAA** - Health Insurance Portability and Accountability Act
-- **PCI-DSS** - Payment Card Industry Data Security Standard
-- **NIST** - National Institute of Standards and Technology frameworks
-- **GDPR** - General Data Protection Regulation
-- **CMMC** - Cybersecurity Maturity Model Certification
-- **StateRAMP** - State Risk and Authorization Management Program
+**[Browse the Directory](https://grc-engineering-club.github.io/)** — search by specialization, framework, language, and availability.
 
 ## Engineers
 
@@ -39,34 +17,18 @@ A community-driven directory of Governance, Risk, and Compliance (GRC) engineers
 
 ## Add Yourself
 
-Want to be listed in the directory? It's easy:
+The easiest way is to use the **[submission form](https://grc-engineering-club.github.io/submit/)** on the site — it walks you through creating your profile and opens a PR automatically.
 
-1. **Fork** this repository
-2. **Copy** `engineers/_template.md` to `engineers/{your-github-username}.md`
-3. **Fill out** your profile with your information
-4. **Submit** a Pull Request
+You can also fork this repo, copy `engineers/_template.md` to `engineers/{your-github-username}.md`, fill it out, and submit a PR. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions and guidelines.
+## How It Works
 
-## About This Project
+- **Validation** — PRs with new engineer profiles are automatically validated for required fields
+- **README** — the engineer table above is auto-generated from profile files on each push
+- **Deploy** — the site rebuilds and deploys to GitHub Pages automatically
 
-This directory helps the GRC community:
-
-- **Find experts** in specific compliance frameworks or security domains
-- **Connect** with peers for mentoring, collaboration, or consulting
-- **Showcase** your expertise and contributions to the field
-
-### Why Contribute?
-
-- Increase your visibility in the GRC community
-- Connect with others working on similar challenges
-- Find mentors or mentees
-- Discover collaboration opportunities
+Built with [Eleventy](https://www.11ty.dev/) and deployed on [GitHub Pages](https://pages.github.com/).
 
 ## License
 
-This project is released under [CC0 1.0 Universal](LICENSE) - Public Domain Dedication.
-
-## Code of Conduct
-
-Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
+[CC0 1.0 Universal](LICENSE) — Public Domain Dedication. See our [Code of Conduct](CODE_OF_CONDUCT.md).

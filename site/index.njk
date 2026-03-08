@@ -8,6 +8,7 @@ permalink: /index.html
   <div class="hero-content">
     <h1>Find a GRC Engineer</h1>
     <p class="hero-tagline">Browse verified GRC professionals by specialization, framework expertise, and availability.</p>
+    <p class="hero-sub">Pre-vetted professionals with verified open-source contributions.</p>
     <div class="hero-stats">
       <div class="hero-stat">
         <span class="hero-stat-num" data-target="{{ collections.engineers.length }}">0</span> Engineers
@@ -16,7 +17,7 @@ permalink: /index.html
         <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('frameworks') | length }}">0</span> Frameworks
       </div>
       <div class="hero-stat">
-        <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('specializations') | length }}">0</span> Specializations
+        <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('certifications') | length }}">0</span> Certifications
       </div>
     </div>
   </div>
@@ -65,5 +66,7 @@ permalink: /index.html
   <p id="no-results" class="no-results" style="display:none">No engineers match your filters.</p>
 </section>
 
+<script defer src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script src="/site/assets/js/search.js"></script>
 <script defer src="/site/assets/js/effects.js"></script>

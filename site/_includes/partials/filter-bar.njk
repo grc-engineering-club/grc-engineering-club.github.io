@@ -8,7 +8,7 @@
     <div class="filter-chips" data-filter="specializations">
       {% set allSpecs = collections.engineers | uniqueValues("specializations") %}
       {% for spec in allSpecs %}
-      <button class="chip" data-value="{{ spec | lower }}">{{ spec }}</button>
+      <button class="chip" data-value="{{ spec | lower }}" aria-pressed="false">{{ spec }}</button>
       {% endfor %}
     </div>
   </div>
@@ -18,7 +18,17 @@
     <div class="filter-chips" data-filter="frameworks">
       {% set allFrameworks = collections.engineers | uniqueValues("frameworks") %}
       {% for fw in allFrameworks %}
-      <button class="chip" data-value="{{ fw | lower }}">{{ fw }}</button>
+      <button class="chip" data-value="{{ fw | lower }}" aria-pressed="false">{{ fw }}</button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <h3 class="filter-label">Certifications</h3>
+    <div class="filter-chips" data-filter="certifications">
+      {% set allCerts = collections.engineers | uniqueValues("certifications") %}
+      {% for cert in allCerts %}
+      <button class="chip" data-value="{{ cert | lower }}" aria-pressed="false">{{ cert }}</button>
       {% endfor %}
     </div>
   </div>
@@ -28,7 +38,7 @@
     <div class="filter-chips" data-filter="languages">
       {% set allLanguages = collections.engineers | uniqueValues("languages") %}
       {% for lang in allLanguages %}
-      <button class="chip" data-value="{{ lang | lower }}">{{ lang }}</button>
+      <button class="chip" data-value="{{ lang | lower }}" aria-pressed="false">{{ lang }}</button>
       {% endfor %}
     </div>
   </div>
@@ -38,7 +48,7 @@
     <div class="filter-chips" data-filter="available">
       {% set allAvailable = collections.engineers | uniqueValues("available_for") %}
       {% for a in allAvailable %}
-      <button class="chip" data-value="{{ a | lower }}">{{ a }}</button>
+      <button class="chip" data-value="{{ a | lower }}" aria-pressed="false">{{ a }}</button>
       {% endfor %}
     </div>
   </div>
