@@ -33,6 +33,7 @@ A community-driven directory of Governance, Risk, and Compliance (GRC) engineers
 |------|-----------------|------------|-------|
 | **[Luigi Carpio](engineers/0xBahalaNa.md)** | GRC Engineering, Compliance Automation, Cloud Security, Identity Engineering (IAM/IGA) | CJIS Security Policy v6.0, FedRAMP (High baseline), NIST 800-53 Rev 5 | [GitHub](https://github.com/0xBahalaNa), [LinkedIn](https://linkedin.com/in/luigi-carpio) |
 | **[Jonathan Perez](engineers/GRCJP.md)** | GRC Engineering, Vulnerability Management Automation, Cloud Security, Compliance Automation | NIST RMF, NIST CSF, NIST 800-53 Rev 5, FedRAMP, SOC 2, ISO 27001, IRS PUB 1075, COBIT, GAO Greenbook, CMS ARC-AMPE, CMMC 2.0 | [GitHub](https://github.com/GRCJP), [LinkedIn](https://www.linkedin.com/in/cyberjp/) |
+| **[Akeem Williams](engineers/ajwill85.md)** | GRC Engineering, Compliance Automation, Cloud Security, Risk Management, Audit & Assurance, Third-Party Risk, Privacy | ISO 27001, SOC 2, PCI-DSS, NIST CSF, NIST RMF, NIST 800-53, GDPR, CCPA, HIPAA, ISO 42001, NIST AI RMF, EU AI Act | [GitHub](https://github.com/ajwill85) |
 | **[Brian Montiel](engineers/networkbm.md)** | Cloud Security, Compliance Automation, Offensive Security, Python & Rust | SOC 2, FedRAMP, GovRAMP | [GitHub](https://github.com/networkbm), [LinkedIn](https://www.linkedin.com/in/brian-montiel-95b38b239/), [Website](https://brianmontiel.netlify.app/) |
 <!-- END_ENGINEER_LIST -->
 
