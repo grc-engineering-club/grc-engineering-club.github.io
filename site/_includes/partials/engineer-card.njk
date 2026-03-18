@@ -1,0 +1,68 @@
+<article
+  class="card"
+  style="--i:{{ loop.index0 }}"
+  data-specializations="{{ (engineer.data.specializations or []) | join(',') | lower }}"
+  data-frameworks="{{ (engineer.data.frameworks or []) | join(',') | lower }}"
+  data-certifications="{{ (engineer.data.certifications or []) | join(',') | lower }}"
+  data-available="{{ (engineer.data.available_for or []) | join(',') | lower }}"
+  data-languages="{{ (engineer.data.languages or []) | join(',') | lower }}"
+  data-name="{{ engineer.data.name | lower }}"
+>
+  <div class="card-header">
+    <img
+      src="https://github.com/{{ engineer.data.github }}.png?size=200"
+      alt="{{ engineer.data.name }}"
+      class="card-avatar"
+      width="64"
+      height="64"
+      loading="lazy"
+    >
+    <div>
+      <a href="/engineers/{{ engineer.data.github }}/" class="card-name">{{ engineer.data.name }}</a>
+      {% if engineer.data.title %}<p class="card-title">{{ engineer.data.title }}</p>{% endif %}
+      {% if engineer.data.company %}<p class="card-company">{{ engineer.data.company }}</p>{% endif %}
+    </div>
+  </div>
+
+  {% if engineer.data.location %}
+  <p class="card-location">{{ engineer.data.location }}</p>
+  {% endif %}
+
+  {% if engineer.data.certifications and engineer.data.certifications.length %}
+  <div class="card-tags">
+    {% for c in engineer.data.certifications %}{% if loop.index0 < 4 %}<span class="tag tag-cert">{{ c }}</span>{% endif %}{% endfor %}
+    {% if engineer.data.certifications.length > 4 %}<span class="tag tag-cert">+{{ engineer.data.certifications.length - 4 }} more</span>{% endif %}
+  </div>
+  {% endif %}
+
+  {% if engineer.data.frameworks and engineer.data.frameworks.length %}
+  <div class="card-tags">
+    {% for f in engineer.data.frameworks %}{% if loop.index0 < 4 %}<span class="tag tag-outline">{{ f }}</span>{% endif %}{% endfor %}
+    {% if engineer.data.frameworks.length > 4 %}<span class="tag tag-outline">+{{ engineer.data.frameworks.length - 4 }} more</span>{% endif %}
+  </div>
+  {% endif %}
+
+  {% if engineer.data.specializations and engineer.data.specializations.length %}
+  <div class="card-tags">
+    {% for s in engineer.data.specializations %}<span class="tag tag-accent">{{ s }}</span>{% endfor %}
+  </div>
+  {% endif %}
+
+  {% if engineer.data.available_for and engineer.data.available_for.length %}
+  <div class="card-available">
+    {% for a in engineer.data.available_for %}<span class="tag tag-available">{{ a }}</span>{% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="card-links">
+    {% for social in socials %}
+      {% set val = engineer.data[social.key] %}
+      {% if val or social.alwaysShow %}
+        {% set href = social | socialUrl(val or engineer.data.github) %}
+        <a href="{{ href }}" target="_blank" rel="noopener" title="{{ social.label }}">
+          {{ social.icon | safe }}
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+</article>

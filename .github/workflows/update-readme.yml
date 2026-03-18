@@ -1,0 +1,112 @@
+name: Update README with Engineers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'engineers/*.md'
+      - '!engineers/_template.md'
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Generate engineer table
+        id: generate
+        run: |
+          # Start building the table
+          TABLE="| Name | Specializations | Frameworks | Links |
+          |------|-----------------|------------|-------|"
+
+          # Find all engineer files (excluding template)
+          for file in engineers/*.md; do
+            # Skip template file
+            if [[ "$file" == "engineers/_template.md" ]]; then
+              continue
+            fi
+
+            # Extract frontmatter (between --- markers)
+            frontmatter=$(awk 'BEGIN{c=0} /^---$/{c++;next} c==1' "$file")
+
+            # Parse required fields
+            name=$(echo "$frontmatter" | yq -r '.name // ""')
+            github=$(echo "$frontmatter" | yq -r '.github // ""')
+
+            # Skip if required fields are missing
+            if [[ -z "$name" || -z "$github" ]]; then
+              echo "Skipping $file - missing required fields"
+              continue
+            fi
+
+            # Parse optional fields
+            specializations=$(echo "$frontmatter" | yq -r '(.specializations // []) | join(", ")')
+            frameworks=$(echo "$frontmatter" | yq -r '(.frameworks // []) | join(", ")')
+            linkedin=$(echo "$frontmatter" | yq -r '.linkedin // ""')
+            website=$(echo "$frontmatter" | yq -r '.website // ""')
+
+            # Build links column
+            links="[GitHub](https://github.com/$github)"
+            if [[ -n "$linkedin" ]]; then
+              links="$links, [LinkedIn]($linkedin)"
+            fi
+            if [[ -n "$website" ]]; then
+              links="$links, [Website]($website)"
+            fi
+
+            # Add row to table
+            TABLE="$TABLE
+          | **[$name]($file)** | $specializations | $frameworks | $links |"
+          done
+
+          # Check if we have any engineers
+          engineer_count=$(ls -1 engineers/*.md 2>/dev/null | grep -v "_template.md" | wc -l)
+
+          if [[ "$engineer_count" -eq 0 ]]; then
+            CONTENT="*No engineers yet. Be the first to add yourself!*"
+          else
+            CONTENT="$TABLE"
+          fi
+
+          # Write content to temp file for multi-line handling
+          echo "$CONTENT" > /tmp/engineer_table.md
+
+      - name: Update README
+        run: |
+          # Read the generated content
+          NEW_CONTENT=$(cat /tmp/engineer_table.md)
+
+          # Use awk to replace content between markers
+          awk -v content="$NEW_CONTENT" '
+            /<!-- BEGIN_ENGINEER_LIST -->/ {
+              print
+              print content
+              skip = 1
+              next
+            }
+            /<!-- END_ENGINEER_LIST -->/ {
+              skip = 0
+            }
+            !skip
+          ' README.md > README.tmp && mv README.tmp README.md
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md
+          git diff --staged --quiet || git commit -m "docs: auto-update engineer directory"
+          git pull --rebase origin main
+          git push
