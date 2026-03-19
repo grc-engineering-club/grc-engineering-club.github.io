@@ -162,46 +162,46 @@ function buildNarrative(progress, sectionMetrics, config) {
       fromFormation: fromFormation,
       toFormation: toFormation,
       localProgress: 1,
-      depthPush: 0.22,
-      scatterMix: 0,
-      chaos: 0,
-      dispersion: 0,
-      reassembly: 1,
-      tension: 0
+      morphPhase: "settled",
+      morphProgress: 0
     };
   }
 
   const start = starts[fromFormation];
   const end = Math.max(starts[toFormation], start + 0.0001);
   const localProgress = clamp((progress - start) / (end - start), 0, 1);
-  const reassemblyWindow = clamp(config.reassemblyWindow || 0.56, 0.32, 0.78);
-  const reassemblyStart = clamp(0.84 - reassemblyWindow, 0.24, 0.7);
-  const reassemblyEnd = clamp(reassemblyStart + reassemblyWindow, reassemblyStart + 0.12, 0.96);
-  const depthPunch = smoothStep(0.06, 0.24, localProgress);
-  const scatterMix = smoothStep(0.18, 0.5, localProgress) * (1 - smoothStep(0.7, 0.9, localProgress) * 0.34);
-  const chaosPlateau = smoothStep(0.3, 0.56, localProgress) * (1 - smoothStep(0.62, 0.88, localProgress));
-  const reassembly = smoothStep(reassemblyStart, reassemblyEnd, localProgress);
-  const chaos = clamp(Math.max(scatterMix * (1 - reassembly) * 0.68, chaosPlateau * 0.55), 0, 1);
-  const dispersion = clamp(
-    smoothStep(0.16, 0.46, localProgress) * (1 - reassembly * 0.28)
-      + chaosPlateau * 0.18,
-    0,
-    1
-  );
-  const depthPush = clamp(depthPunch * (1 - reassembly * 0.2) + chaosPlateau * 0.1, 0, 1);
-  const tension = clamp(smoothStep(0.14, 0.34, localProgress) - reassembly * 0.36, 0, 1);
+
+  const departureFrac = config.departureFraction || 0.27;
+  const driftFrac = config.driftFraction || 0.25;
+  const arrivalFrac = config.arrivalFraction || 0.40;
+  const settledEnd = clamp(1 - departureFrac - driftFrac - arrivalFrac, 0.02, 0.2);
+  const departureEnd = settledEnd + departureFrac;
+  const driftEnd = departureEnd + driftFrac;
+
+  let morphPhase;
+  let morphProgress;
+
+  if (localProgress < settledEnd) {
+    morphPhase = "settled";
+    morphProgress = settledEnd > 0 ? localProgress / settledEnd : 0;
+  } else if (localProgress < departureEnd) {
+    morphPhase = "departing";
+    morphProgress = (localProgress - settledEnd) / (departureEnd - settledEnd);
+  } else if (localProgress < driftEnd) {
+    morphPhase = "drifting";
+    morphProgress = (localProgress - departureEnd) / (driftEnd - departureEnd);
+  } else {
+    morphPhase = "arriving";
+    morphProgress = (localProgress - driftEnd) / (1 - driftEnd);
+  }
 
   return {
     progress: progress,
     fromFormation: fromFormation,
     toFormation: toFormation,
     localProgress: localProgress,
-    depthPush: depthPush,
-    scatterMix: scatterMix,
-    chaos: chaos,
-    dispersion: dispersion,
-    reassembly: reassembly,
-    tension: tension
+    morphPhase: morphPhase,
+    morphProgress: clamp(morphProgress, 0, 1)
   };
 }
 
@@ -255,8 +255,6 @@ export function createHeroRenderer(options) {
   let cameraOffsetZ = CAMERA_Z;
   let lookAtX = 0;
   let lookAtY = 0;
-  let heroPointerEnabled = true;
-
   function createMaterial() {
     return new THREE.ShaderMaterial({
       vertexShader: VERTEX_SHADER,
@@ -360,30 +358,13 @@ export function createHeroRenderer(options) {
     canvas.style.display = "none";
   }
 
-  function syncInteractionState(narrative) {
-    if (!interaction) return;
-
-    const rect = root.getBoundingClientRect();
-    const isVisible = rect.bottom > window.innerHeight * 0.18
-      && rect.top < window.innerHeight * 0.78
-      && narrative.fromFormation === 0;
-
-    if (heroPointerEnabled !== isVisible) {
-      heroPointerEnabled = isVisible;
-      interaction.setEnabled(isVisible);
-    }
-  }
-
   function updateSceneMotion(interactionState, narrative, deltaTime) {
-    const pointerX = (interactionState.x - 0.5) * interactionState.active * interactionState.strength;
-    const pointerY = (0.5 - interactionState.y) * interactionState.active * interactionState.strength;
-    const pointerRotationStrength = config.pointerRotationStrength || 0.08;
-    const motionEasing = 1 - Math.exp(-(config.motionEasing || 1.7) * deltaTime);
-    const cameraEasing = 1 - Math.exp(-(config.cameraEasing || 0.8) * deltaTime);
-    const cameraDriftStrength = config.cameraDriftStrength || 0.12;
+    const motionEasing = 1 - Math.exp(-(config.motionEasing || 1.2) * deltaTime);
+    const cameraEasing = 1 - Math.exp(-(config.cameraEasing || 0.5) * deltaTime);
+    const cameraDriftStrength = config.cameraDriftStrength || 0.06;
     const fromPose = SECTION_POSES[narrative.fromFormation] || SECTION_POSES[0];
     const toPose = SECTION_POSES[narrative.toFormation] || fromPose;
-    const poseMix = narrative.reassembly;
+    const poseMix = narrative.localProgress;
     const poseGroupX = lerp(fromPose.groupX, toPose.groupX, poseMix);
     const poseGroupY = lerp(fromPose.groupY, toPose.groupY, poseMix);
     const poseRotX = lerp(fromPose.rotX, toPose.rotX, poseMix);
@@ -400,45 +381,24 @@ export function createHeroRenderer(options) {
     const idleRotX = Math.sin(elapsed * 0.06 + 0.3) * 0.013 * config.idleRotationStrength;
     const idleRotY = Math.cos(elapsed * 0.055 + 1.1) * 0.028 * config.idleRotationStrength;
     const idleRotZ = Math.sin(elapsed * 0.05 + 2.4) * 0.014 * config.idleRotationStrength;
-    const pointerRotY = pointerX * 0.018 * pointerRotationStrength;
-    const pointerRotX = pointerY * 0.008 * pointerRotationStrength;
-    const targetGroupX = poseGroupX
-      - narrative.depthPush * 0.26
-      + idleDriftX;
-    const targetGroupY = poseGroupY
-      - narrative.depthPush * 0.08
-      + idleDriftY
-      + narrative.chaos * 0.02;
-    const targetRotationY = poseRotY
-      + pointerRotY
-      + idleRotY
-      + narrative.depthPush * 0.12
-      + narrative.chaos * 0.08;
-    const targetRotationX = poseRotX
-      + pointerRotX
-      + idleRotX
-      - narrative.depthPush * 0.05
-      + narrative.chaos * 0.02;
-    const targetRotationZ = poseRotZ
-      + idleRotZ
-      + narrative.scatterMix * 0.05
-      + narrative.chaos * 0.04;
-    const targetScale = poseScale
-      + narrative.depthPush * 0.12
-      + narrative.chaos * 0.04;
+
+    let depthAdjust = 0;
+    if (narrative.morphPhase === "departing") depthAdjust = 0.6;
+    else if (narrative.morphPhase === "arriving") depthAdjust = -0.3;
+
+    const targetGroupX = poseGroupX + idleDriftX;
+    const targetGroupY = poseGroupY + idleDriftY;
+    const targetRotationY = poseRotY + idleRotY;
+    const targetRotationX = poseRotX + idleRotX;
+    const targetRotationZ = poseRotZ + idleRotZ;
+    const targetScale = poseScale;
     const targetCameraX = poseCamX
-      - narrative.depthPush * 0.1
       + Math.sin(elapsed * 0.01 + 1.2) * (0.008 * cameraDriftStrength);
     const targetCameraY = poseCamY
-      + narrative.depthPush * 0.06
-      - narrative.reassembly * 0.02
       + Math.cos(elapsed * 0.008 + 0.3) * (0.006 * cameraDriftStrength);
-    const targetCameraZ = poseCamZ
-      - narrative.depthPush * 1.8
-      - narrative.chaos * 0.36
-      - narrative.dispersion * 0.22;
-    const targetLookAtX = poseLookX - narrative.depthPush * 0.1;
-    const targetLookAtY = poseLookY + narrative.chaos * 0.005;
+    const targetCameraZ = poseCamZ - depthAdjust;
+    const targetLookAtX = poseLookX;
+    const targetLookAtY = poseLookY;
 
     groupPositionX += (targetGroupX - groupPositionX) * motionEasing;
     groupPositionY += (targetGroupY - groupPositionY) * motionEasing;
@@ -484,8 +444,6 @@ export function createHeroRenderer(options) {
       : getPageScrollProgress(scrollElement);
     displayedScrollProgress = smoothProgress(displayedScrollProgress, rawScrollProgress, deltaTime, config);
     const narrative = buildNarrative(displayedScrollProgress, sectionMetrics, config);
-
-    syncInteractionState(narrative);
 
     updateParticleState(
       state,
@@ -578,9 +536,7 @@ export function createHeroRenderer(options) {
     root.classList.remove("hero-animation-fallback");
     canvas.style.display = "";
 
-    if (!reducedMotion) {
-      interaction = createInteractionController(root, viewportElement, config.interactionStrength);
-    }
+    interaction = createInteractionController();
 
     window.addEventListener("resize", handleResize);
   }
@@ -634,7 +590,6 @@ export function createHeroRenderer(options) {
     updateConfig(nextConfig) {
       config = nextConfig;
       reducedMotion = getMotionPreference();
-      if (interaction) interaction.setStrength(config.interactionStrength);
       entranceActive = false;
       this.refreshLayout();
     },

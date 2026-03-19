@@ -1,7 +1,7 @@
 import { clamp, hexToRgb } from "../config.js";
 
-const FORMATION_ORDER = ["hero", "browse", "directory", "insights", "footer"];
-const FORMATION_COUNT = FORMATION_ORDER.length;
+var FORMATION_ORDER = ["hero", "browse", "directory", "insights", "footer"];
+var FORMATION_COUNT = FORMATION_ORDER.length;
 
 function randomBetween(min, max) {
   return min + Math.random() * (max - min);
@@ -12,14 +12,18 @@ function mix(a, b, t) {
 }
 
 function smoothOut(t) {
-  const value = clamp(t, 0, 1);
+  var value = clamp(t, 0, 1);
   return 1 - Math.pow(1 - value, 3);
 }
 
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
 function worldFromUv(u, v, z, camera) {
-  const distance = camera.position.z - z;
-  const halfHeight = Math.tan((camera.fov * Math.PI) / 360) * distance;
-  const halfWidth = halfHeight * camera.aspect;
+  var distance = camera.position.z - z;
+  var halfHeight = Math.tan((camera.fov * Math.PI) / 360) * distance;
+  var halfWidth = halfHeight * camera.aspect;
 
   return {
     x: (u - 0.5) * halfWidth * 2,
@@ -28,11 +32,11 @@ function worldFromUv(u, v, z, camera) {
 }
 
 function buildEntranceOffset(sample, isMobile) {
-  const edgeBias = Math.random();
-  let startU = sample.scatter.u;
-  let startV = sample.scatter.v;
-  let startZ = sample.scatter.z + randomBetween(-10, 10);
-  const hero = sample.formations.hero;
+  var edgeBias = Math.random();
+  var startU = sample.scatter.u;
+  var startV = sample.scatter.v;
+  var startZ = sample.scatter.z + randomBetween(-10, 10);
+  var hero = sample.formations.hero;
 
   if (edgeBias < 0.34) {
     startU = sample.scatter.u + randomBetween(isMobile ? -0.26 : -0.42, isMobile ? 0.26 : 0.42);
@@ -53,8 +57,8 @@ function buildEntranceOffset(sample, isMobile) {
 }
 
 export function createParticleState(samples, palette, camera, isMobile, useEntrance) {
-  const count = samples.length;
-  const state = {
+  var count = samples.length;
+  var state = {
     count: count,
     current: new Float32Array(count * 3),
     velocity: new Float32Array(count * 3),
@@ -86,25 +90,25 @@ export function createParticleState(samples, palette, camera, isMobile, useEntra
     scatterUv: new Float32Array(count * 2)
   };
 
-  for (let index = 0; index < count; index += 1) {
-    const sample = samples[index];
-    const entrance = buildEntranceOffset(sample, isMobile);
-    const entranceWorld = worldFromUv(entrance.u, entrance.v, entrance.z, camera);
-    const scatterWorld = worldFromUv(sample.scatter.u, sample.scatter.v, sample.scatter.z, camera);
-    const color = hexToRgb(palette[sample.colorIndex].hex);
-    const offsetIndex = index * 3;
-    const formOffset3Base = index * FORMATION_COUNT * 3;
-    const formOffset2Base = index * FORMATION_COUNT * 2;
-    const driftIndex = index * 2;
-    let heroWorld = null;
-    let heroZ = 0;
+  for (var index = 0; index < count; index += 1) {
+    var sample = samples[index];
+    var entrance = buildEntranceOffset(sample, isMobile);
+    var entranceWorld = worldFromUv(entrance.u, entrance.v, entrance.z, camera);
+    var scatterWorld = worldFromUv(sample.scatter.u, sample.scatter.v, sample.scatter.z, camera);
+    var color = hexToRgb(palette[sample.colorIndex].hex);
+    var offsetIndex = index * 3;
+    var formOffset3Base = index * FORMATION_COUNT * 3;
+    var formOffset2Base = index * FORMATION_COUNT * 2;
+    var driftIndex = index * 2;
+    var heroWorld = null;
+    var heroZ = 0;
 
-    for (let formationIndex = 0; formationIndex < FORMATION_COUNT; formationIndex += 1) {
-      const key = FORMATION_ORDER[formationIndex];
-      const formation = sample.formations[key];
-      const world = worldFromUv(formation.u, formation.v, formation.z, camera);
-      const formOffset3 = formOffset3Base + formationIndex * 3;
-      const formOffset2 = formOffset2Base + formationIndex * 2;
+    for (var formationIndex = 0; formationIndex < FORMATION_COUNT; formationIndex += 1) {
+      var key = FORMATION_ORDER[formationIndex];
+      var formation = sample.formations[key];
+      var world = worldFromUv(formation.u, formation.v, formation.z, camera);
+      var formOffset3 = formOffset3Base + formationIndex * 3;
+      var formOffset2 = formOffset2Base + formationIndex * 2;
 
       state.formations[formOffset3] = world.x;
       state.formations[formOffset3 + 1] = world.y;
@@ -163,82 +167,60 @@ export function createParticleState(samples, palette, camera, isMobile, useEntra
 }
 
 export function updateParticleState(state, frame, interaction, config, entranceProgress, narrative) {
-  const deltaTime = frame.deltaTime;
-  const elapsed = frame.elapsed;
-  const scatterMix = narrative.scatterMix;
-  const depthPush = narrative.depthPush;
-  const chaos = narrative.chaos;
-  const dispersion = narrative.dispersion;
-  const reassembly = narrative.reassembly;
-  const fromFormation = narrative.fromFormation;
-  const toFormation = narrative.toFormation;
-  const tension = narrative.tension || 0;
-  const damping = 1 - clamp(deltaTime * (2.6 + chaos * 0.45 + dispersion * 0.68 + reassembly * 0.52), 0.035, 0.1);
-  const entranceMix = smoothOut(entranceProgress);
-  const formationStride3 = FORMATION_COUNT * 3;
-  const formationStride2 = FORMATION_COUNT * 2;
+  var deltaTime = frame.deltaTime;
+  var elapsed = frame.elapsed;
+  var morphPhase = narrative.morphPhase;
+  var morphProgress = narrative.morphProgress;
+  var fromFormation = narrative.fromFormation;
+  var toFormation = narrative.toFormation;
+  var spring = config.morphSpring || 2.2;
+  var damping = config.morphDamping || 0.92;
+  var wobbleAmp = config.settledWobble || 0.03;
+  var entranceMix = smoothOut(entranceProgress);
+  var formationStride3 = FORMATION_COUNT * 3;
+  var isTransitioning = morphPhase !== "settled" && fromFormation !== toFormation;
+  var easedProgress = isTransitioning ? easeInOutCubic(morphProgress) : 0;
 
-  for (let index = 0; index < state.count; index += 1) {
-    const offsetIndex = index * 3;
-    const formationOffset3Base = index * formationStride3;
-    const formationOffset2Base = index * formationStride2;
-    const fromOffset3 = formationOffset3Base + fromFormation * 3;
-    const toOffset3 = formationOffset3Base + toFormation * 3;
-    const fromOffset2 = formationOffset2Base + fromFormation * 2;
-    const toOffset2 = formationOffset2Base + toFormation * 2;
-    const driftIndex = index * 2;
-    const phase = state.phases[index];
-    const flow = state.flow[index] * config.driftSpeed;
-    const noise = state.noise[index];
-    const foregroundWeight = state.foregroundWeight[index];
-    const ambientWeight = state.ambientWeight[index];
-    const rogueWeight = state.rogueWeight[index];
-    const depthFactor = state.depthFactor[index];
-    const orderWeight = state.orderWeight[index];
-    const timeA = elapsed * (0.08 + flow * 0.44) + phase;
-    const timeB = elapsed * (0.06 + noise * 0.42) + phase * 1.17;
-    const fromWave = Math.sin(timeA);
-    const toWave = Math.sin(elapsed * (0.1 + flow * 0.36) + phase * 0.62);
-    const scatterWave = Math.cos(elapsed * (0.12 + flow * 0.32) + phase * 0.74);
-    const fromMotionX = state.formationOrbit[fromOffset2] * fromWave * (0.045 + flow * 0.1) * (0.3 + depthFactor * 0.28);
-    const fromMotionY = state.formationOrbit[fromOffset2 + 1] * fromWave * (0.04 + flow * 0.08) * (0.28 + depthFactor * 0.22);
-    const toMotionX = state.formationOrbit[toOffset2] * toWave * (0.04 + orderWeight * 0.04) * (0.22 + reassembly * 0.24);
-    const toMotionY = state.formationOrbit[toOffset2 + 1] * toWave * (0.038 + orderWeight * 0.04) * (0.2 + reassembly * 0.22);
-    const chaosAmplitude = (0.045 + rogueWeight * 0.08 + foregroundWeight * 0.08) * (0.28 + chaos * 0.42 + dispersion * 0.22 + tension * 0.08);
-    const scatterMotionX = state.drift[driftIndex] * scatterWave * chaosAmplitude;
-    const scatterMotionY = state.drift[driftIndex + 1] * Math.sin(elapsed * (0.1 + noise * 0.32) + phase) * chaosAmplitude * 0.68;
+  for (var index = 0; index < state.count; index += 1) {
+    var offsetIndex = index * 3;
+    var formOffset3Base = index * formationStride3;
+    var fromOffset3 = formOffset3Base + fromFormation * 3;
+    var toOffset3 = formOffset3Base + toFormation * 3;
+    var driftIndex = index * 2;
+    var phase = state.phases[index];
+    var flow = state.flow[index];
+    var targetX = 0;
+    var targetY = 0;
+    var targetZ = 0;
 
-    let targetX = mix(
-      state.formations[fromOffset3] + fromMotionX,
-      state.scatter[offsetIndex] + scatterMotionX,
-      scatterMix
-    );
-    let targetY = mix(
-      state.formations[fromOffset3 + 1] + fromMotionY,
-      state.scatter[offsetIndex + 1] + scatterMotionY,
-      scatterMix
-    );
-    let targetZ = mix(
-      state.formations[fromOffset3 + 2] + Math.cos(timeB) * (0.12 + depthFactor * 0.2),
-      state.scatter[offsetIndex + 2] + Math.sin(timeA) * (0.2 + rogueWeight * 0.42 + foregroundWeight * 0.34) * (0.12 + chaos * 0.28),
-      scatterMix
-    );
-
-    targetX = mix(targetX, state.formations[toOffset3] + toMotionX, reassembly);
-    targetY = mix(targetY, state.formations[toOffset3 + 1] + toMotionY, reassembly);
-    targetZ = mix(
-      targetZ,
-      state.formations[toOffset3 + 2] + Math.cos(timeA * 0.92) * (0.14 + orderWeight * 0.18),
-      reassembly
-    );
+    if (morphPhase === "settled" || fromFormation === toFormation) {
+      var wX = Math.sin(elapsed * (0.06 + flow * 0.2) + phase) * wobbleAmp;
+      var wY = Math.cos(elapsed * (0.05 + flow * 0.15) + phase * 1.3) * wobbleAmp * 0.8;
+      var wZ = Math.sin(elapsed * (0.04 + flow * 0.1) + phase * 0.7) * wobbleAmp * 0.5;
+      targetX = state.formations[fromOffset3] + wX;
+      targetY = state.formations[fromOffset3 + 1] + wY;
+      targetZ = state.formations[fromOffset3 + 2] + wZ;
+    } else if (morphPhase === "departing") {
+      targetX = mix(state.formations[fromOffset3], state.scatter[offsetIndex], easedProgress);
+      targetY = mix(state.formations[fromOffset3 + 1], state.scatter[offsetIndex + 1], easedProgress);
+      targetZ = mix(state.formations[fromOffset3 + 2], state.scatter[offsetIndex + 2], easedProgress);
+    } else if (morphPhase === "drifting") {
+      var driftMotionX = state.drift[driftIndex] * Math.sin(elapsed * (0.08 + flow * 0.2) + phase) * 0.04;
+      var driftMotionY = state.drift[driftIndex + 1] * Math.cos(elapsed * (0.06 + flow * 0.15) + phase) * 0.03;
+      targetX = state.scatter[offsetIndex] + driftMotionX;
+      targetY = state.scatter[offsetIndex + 1] + driftMotionY;
+      targetZ = state.scatter[offsetIndex + 2] + Math.sin(elapsed * 0.04 + phase) * 0.15;
+    } else {
+      targetX = mix(state.scatter[offsetIndex], state.formations[toOffset3], easedProgress);
+      targetY = mix(state.scatter[offsetIndex + 1], state.formations[toOffset3 + 1], easedProgress);
+      targetZ = mix(state.scatter[offsetIndex + 2], state.formations[toOffset3 + 2], easedProgress);
+    }
 
     if (entranceMix < 1) {
       targetX = mix(state.entrance[offsetIndex], targetX, entranceMix);
       targetY = mix(state.entrance[offsetIndex + 1], targetY, entranceMix);
       targetZ = mix(state.entrance[offsetIndex + 2], targetZ, entranceMix);
     }
-
-    const spring = state.returnStrength[index] * (0.44 + depthPush * 0.16 + dispersion * 0.14 + chaos * 0.12 + reassembly * 0.12);
 
     state.velocity[offsetIndex] += (targetX - state.current[offsetIndex]) * deltaTime * spring;
     state.velocity[offsetIndex + 1] += (targetY - state.current[offsetIndex + 1]) * deltaTime * spring;
@@ -250,23 +232,14 @@ export function updateParticleState(state, frame, interaction, config, entranceP
     state.current[offsetIndex + 1] += state.velocity[offsetIndex + 1];
     state.current[offsetIndex + 2] += state.velocity[offsetIndex + 2];
 
-    const scaleBoost = 1
-      + depthPush * (0.08 + depthFactor * 0.06)
-      + dispersion * (depthFactor * 0.06 + foregroundWeight * 0.12)
-      + chaos * (ambientWeight * 0.03 + foregroundWeight * 0.08 + rogueWeight * 0.02)
-      + reassembly * orderWeight * 0.06;
-    const alphaBoost = clamp(
-      (0.94 + depthPush * 0.08 + dispersion * 0.18 + chaos * 0.06 + reassembly * 0.08) * config.colorIntensity,
-      0.4,
-      1.6
-    );
-    const appearanceMix = entranceMix < 1 ? mix(0.08, 1, entranceMix) : 1;
-    const spinRate = state.spins[index] * config.rotateSpeed * (0.44 + dispersion * 0.48 + chaos * 0.2 + reassembly * 0.16);
+    var transitionBoost = isTransitioning ? 1.04 : 1;
+    var appearanceMix = entranceMix < 1 ? mix(0.08, 1, entranceMix) : 1;
+    var spinRate = state.spins[index] * (config.rotateSpeed || 0.35) * (isTransitioning ? 1.2 : 0.8);
 
-    state.scales[index] = state.scalesBase[index] * scaleBoost * appearanceMix;
-    state.alpha[index] = clamp(state.alphaBase[index] * alphaBoost * appearanceMix, 0.02, 1.28);
+    state.scales[index] = state.scalesBase[index] * transitionBoost * appearanceMix;
+    state.alpha[index] = clamp(state.alphaBase[index] * (config.colorIntensity || 1) * appearanceMix, 0.02, 1.28);
     state.angles[index] = state.angleBase[index]
       + elapsed * spinRate
-      + Math.sin(elapsed * (0.22 + flow * 0.24) + phase) * (0.06 + rogueWeight * 0.06);
+      + Math.sin(elapsed * (0.22 + flow * 0.24) + phase) * 0.06;
   }
 }
