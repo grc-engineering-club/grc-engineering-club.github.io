@@ -13,11 +13,11 @@ const SECTION_SELECTORS = [
   { key: "footer", selector: ".footer" }
 ];
 const SECTION_POSES = [
-  { groupX: 0.3, groupY: 0.02, rotX: -0.18, rotY: -0.52, rotZ: 0.12, scale: 1.26, camX: 0.08, camY: -0.02, camZ: 18.8, lookX: 0.2, lookY: -0.02 },
-  { groupX: 0.08, groupY: 0.16, rotX: -0.1, rotY: -0.2, rotZ: 0.08, scale: 1.12, camX: -0.06, camY: 0.18, camZ: 15.4, lookX: 0.04, lookY: 0.04 },
-  { groupX: -0.06, groupY: 0.22, rotX: -0.18, rotY: 0.04, rotZ: 0.02, scale: 1.04, camX: 0.12, camY: 0.24, camZ: 15.9, lookX: 0.04, lookY: 0.1 },
-  { groupX: 0.18, groupY: 0.06, rotX: -0.12, rotY: 0.24, rotZ: -0.06, scale: 1.08, camX: 0.24, camY: 0.04, camZ: 15.1, lookX: 0.16, lookY: 0.02 },
-  { groupX: 0.02, groupY: -0.18, rotX: -0.04, rotY: 0.1, rotZ: -0.04, scale: 0.98, camX: 0.04, camY: -0.18, camZ: 16.5, lookX: 0.02, lookY: -0.14 }
+  { groupX: 0.79, groupY: 0.06, rotX: -0.16, rotY: -0.5, rotZ: 0.05, scale: 1.13, camX: 0.02, camY: -0.05, camZ: 19.2, lookX: 0.14, lookY: -0.03 },
+  { groupX: 0.62, groupY: 0.04, rotX: -0.12, rotY: -0.22, rotZ: 0.028, scale: 1.05, camX: 0.03, camY: -0.01, camZ: 18.75, lookX: 0.11, lookY: 0.01 },
+  { groupX: 0.46, groupY: -0.01, rotX: -0.08, rotY: 0.02, rotZ: -0.008, scale: 0.99, camX: 0.035, camY: 0.03, camZ: 18.35, lookX: 0.08, lookY: 0.05 },
+  { groupX: 0.54, groupY: -0.08, rotX: -0.05, rotY: 0.16, rotZ: -0.04, scale: 0.98, camX: 0.03, camY: 0.04, camZ: 17.98, lookX: 0.07, lookY: 0.03 },
+  { groupX: 0.35, groupY: -0.17, rotX: -0.03, rotY: 0.07, rotZ: -0.02, scale: 0.95, camX: 0.01, camY: -0.06, camZ: 18.45, lookX: 0.02, lookY: -0.06 }
 ];
 const TRIANGLE_SEGMENTS = new Float32Array([
   0, 1, 0,
@@ -143,7 +143,7 @@ function buildSectionMetrics(scrollElement) {
   return { starts: starts };
 }
 
-function buildNarrative(progress, sectionMetrics) {
+function buildNarrative(progress, sectionMetrics, config) {
   const starts = sectionMetrics.starts;
   let fromFormation = starts.length - 1;
 
@@ -174,14 +174,22 @@ function buildNarrative(progress, sectionMetrics) {
   const start = starts[fromFormation];
   const end = Math.max(starts[toFormation], start + 0.0001);
   const localProgress = clamp((progress - start) / (end - start), 0, 1);
-  const depthPunch = smoothStep(0.04, 0.18, localProgress);
-  const scatterMix = smoothStep(0.18, 0.42, localProgress);
-  const chaosPlateau = smoothStep(0.28, 0.46, localProgress) * (1 - smoothStep(0.74, 0.9, localProgress));
-  const reassembly = smoothStep(0.84, 0.98, localProgress);
-  const chaos = clamp(Math.max(scatterMix * (1 - reassembly), chaosPlateau), 0, 1);
-  const dispersion = clamp(smoothStep(0.16, 0.34, localProgress) + chaosPlateau * 0.32, 0, 1);
-  const depthPush = clamp(depthPunch * (1 - reassembly * 0.18) + chaosPlateau * 0.22, 0, 1);
-  const tension = clamp(smoothStep(0.14, 0.3, localProgress) - reassembly * 0.34, 0, 1);
+  const reassemblyWindow = clamp(config.reassemblyWindow || 0.56, 0.32, 0.78);
+  const reassemblyStart = clamp(0.84 - reassemblyWindow, 0.24, 0.7);
+  const reassemblyEnd = clamp(reassemblyStart + reassemblyWindow, reassemblyStart + 0.12, 0.96);
+  const depthPunch = smoothStep(0.06, 0.24, localProgress);
+  const scatterMix = smoothStep(0.18, 0.5, localProgress) * (1 - smoothStep(0.7, 0.9, localProgress) * 0.34);
+  const chaosPlateau = smoothStep(0.3, 0.56, localProgress) * (1 - smoothStep(0.62, 0.88, localProgress));
+  const reassembly = smoothStep(reassemblyStart, reassemblyEnd, localProgress);
+  const chaos = clamp(Math.max(scatterMix * (1 - reassembly) * 0.68, chaosPlateau * 0.55), 0, 1);
+  const dispersion = clamp(
+    smoothStep(0.16, 0.46, localProgress) * (1 - reassembly * 0.28)
+      + chaosPlateau * 0.18,
+    0,
+    1
+  );
+  const depthPush = clamp(depthPunch * (1 - reassembly * 0.2) + chaosPlateau * 0.1, 0, 1);
+  const tension = clamp(smoothStep(0.14, 0.34, localProgress) - reassembly * 0.36, 0, 1);
 
   return {
     progress: progress,
@@ -197,12 +205,20 @@ function buildNarrative(progress, sectionMetrics) {
   };
 }
 
+function smoothProgress(current, target, deltaTime, config) {
+  const easing = 1 - Math.exp(-(config.scrollSmoothing || 3.6) * deltaTime);
+  const maxStep = Math.max((config.scrollVelocityClamp || 0.24) * deltaTime, 0.001);
+  const delta = clamp(target - current, -maxStep, maxStep);
+  const lerpFactor = 0.18 + easing * 0.52;
+
+  return current + delta * lerpFactor;
+}
+
 export function createHeroRenderer(options) {
   const root = options.root;
   const canvas = options.canvas;
   const viewportElement = options.viewportElement;
   const scrollElement = options.scrollElement || document.documentElement;
-  const interactionElement = options.interactionElement || document.body;
   let config = options.config;
   let reducedMotion = getMotionPreference();
   let scene = null;
@@ -226,6 +242,8 @@ export function createHeroRenderer(options) {
   let state = null;
   let composition = null;
   let sectionMetrics = buildSectionMetrics(scrollElement);
+  let rawScrollProgress = 0;
+  let displayedScrollProgress = 0;
   let groupPositionX = 0.16;
   let groupPositionY = 0.04;
   let groupRotationX = -0.14;
@@ -237,6 +255,7 @@ export function createHeroRenderer(options) {
   let cameraOffsetZ = CAMERA_Z;
   let lookAtX = 0;
   let lookAtY = 0;
+  let heroPointerEnabled = true;
 
   function createMaterial() {
     return new THREE.ShaderMaterial({
@@ -341,10 +360,27 @@ export function createHeroRenderer(options) {
     canvas.style.display = "none";
   }
 
+  function syncInteractionState(narrative) {
+    if (!interaction) return;
+
+    const rect = root.getBoundingClientRect();
+    const isVisible = rect.bottom > window.innerHeight * 0.18
+      && rect.top < window.innerHeight * 0.78
+      && narrative.fromFormation === 0;
+
+    if (heroPointerEnabled !== isVisible) {
+      heroPointerEnabled = isVisible;
+      interaction.setEnabled(isVisible);
+    }
+  }
+
   function updateSceneMotion(interactionState, narrative, deltaTime) {
-    const pointerX = (interactionState.x - 0.5) * interactionState.active;
-    const pointerY = (0.5 - interactionState.y) * interactionState.active;
-    const easing = 1 - Math.pow(0.001, deltaTime * 1.7);
+    const pointerX = (interactionState.x - 0.5) * interactionState.active * interactionState.strength;
+    const pointerY = (0.5 - interactionState.y) * interactionState.active * interactionState.strength;
+    const pointerRotationStrength = config.pointerRotationStrength || 0.08;
+    const motionEasing = 1 - Math.exp(-(config.motionEasing || 1.7) * deltaTime);
+    const cameraEasing = 1 - Math.exp(-(config.cameraEasing || 0.8) * deltaTime);
+    const cameraDriftStrength = config.cameraDriftStrength || 0.12;
     const fromPose = SECTION_POSES[narrative.fromFormation] || SECTION_POSES[0];
     const toPose = SECTION_POSES[narrative.toFormation] || fromPose;
     const poseMix = narrative.reassembly;
@@ -359,54 +395,62 @@ export function createHeroRenderer(options) {
     const poseCamZ = lerp(fromPose.camZ, toPose.camZ, poseMix);
     const poseLookX = lerp(fromPose.lookX, toPose.lookX, poseMix);
     const poseLookY = lerp(fromPose.lookY, toPose.lookY, poseMix);
+    const idleDriftX = Math.sin(elapsed * 0.08) * 0.022 * config.idleDriftStrength;
+    const idleDriftY = Math.cos(elapsed * 0.07 + 0.8) * 0.018 * config.idleDriftStrength;
+    const idleRotX = Math.sin(elapsed * 0.06 + 0.3) * 0.013 * config.idleRotationStrength;
+    const idleRotY = Math.cos(elapsed * 0.055 + 1.1) * 0.028 * config.idleRotationStrength;
+    const idleRotZ = Math.sin(elapsed * 0.05 + 2.4) * 0.014 * config.idleRotationStrength;
+    const pointerRotY = pointerX * 0.018 * pointerRotationStrength;
+    const pointerRotX = pointerY * 0.008 * pointerRotationStrength;
     const targetGroupX = poseGroupX
-      - narrative.depthPush * 1.22
-      + pointerX * (0.42 + narrative.chaos * 0.12);
+      - narrative.depthPush * 0.26
+      + idleDriftX;
     const targetGroupY = poseGroupY
-      - narrative.depthPush * 0.46
-      + pointerY * 0.32
-      + narrative.chaos * 0.08;
+      - narrative.depthPush * 0.08
+      + idleDriftY
+      + narrative.chaos * 0.02;
     const targetRotationY = poseRotY
-      + pointerX * (0.26 + narrative.depthPush * 0.08)
-      + narrative.depthPush * 0.64
-      + narrative.chaos * 0.24;
-    const targetRotationX = poseRotX
-      + pointerY * 0.22
-      - narrative.depthPush * 0.36
+      + pointerRotY
+      + idleRotY
+      + narrative.depthPush * 0.12
       + narrative.chaos * 0.08;
+    const targetRotationX = poseRotX
+      + pointerRotX
+      + idleRotX
+      - narrative.depthPush * 0.05
+      + narrative.chaos * 0.02;
     const targetRotationZ = poseRotZ
-      + narrative.scatterMix * 0.36
-      + narrative.chaos * 0.18
-      + Math.sin(elapsed * 0.22) * (0.06 + narrative.chaos * 0.08);
+      + idleRotZ
+      + narrative.scatterMix * 0.05
+      + narrative.chaos * 0.04;
     const targetScale = poseScale
-      + narrative.depthPush * 0.54
-      + narrative.chaos * 0.18;
+      + narrative.depthPush * 0.12
+      + narrative.chaos * 0.04;
     const targetCameraX = poseCamX
-      + pointerX * (0.36 + narrative.chaos * 0.12)
-      - narrative.depthPush * 0.82
-      + narrative.chaos * 0.1;
+      - narrative.depthPush * 0.1
+      + Math.sin(elapsed * 0.01 + 1.2) * (0.008 * cameraDriftStrength);
     const targetCameraY = poseCamY
-      + pointerY * (0.22 + narrative.depthPush * 0.08)
-      + narrative.depthPush * 0.34
-      - narrative.reassembly * 0.12;
+      + narrative.depthPush * 0.06
+      - narrative.reassembly * 0.02
+      + Math.cos(elapsed * 0.008 + 0.3) * (0.006 * cameraDriftStrength);
     const targetCameraZ = poseCamZ
-      - narrative.depthPush * 8.8
-      - narrative.chaos * 2.2
-      - narrative.dispersion * 1.8;
-    const targetLookAtX = poseLookX - narrative.depthPush * 0.56 + pointerX * 0.08;
-    const targetLookAtY = poseLookY + pointerY * 0.06 + narrative.chaos * 0.04;
+      - narrative.depthPush * 1.8
+      - narrative.chaos * 0.36
+      - narrative.dispersion * 0.22;
+    const targetLookAtX = poseLookX - narrative.depthPush * 0.1;
+    const targetLookAtY = poseLookY + narrative.chaos * 0.005;
 
-    groupPositionX += (targetGroupX - groupPositionX) * easing;
-    groupPositionY += (targetGroupY - groupPositionY) * easing;
-    groupRotationX += (targetRotationX - groupRotationX) * easing;
-    groupRotationY += (targetRotationY - groupRotationY) * easing;
-    groupRotationZ += (targetRotationZ - groupRotationZ) * easing;
-    groupScale += (targetScale - groupScale) * easing;
-    cameraOffsetX += (targetCameraX - cameraOffsetX) * easing;
-    cameraOffsetY += (targetCameraY - cameraOffsetY) * easing;
-    cameraOffsetZ += (targetCameraZ - cameraOffsetZ) * easing;
-    lookAtX += (targetLookAtX - lookAtX) * easing;
-    lookAtY += (targetLookAtY - lookAtY) * easing;
+    groupPositionX += (targetGroupX - groupPositionX) * motionEasing;
+    groupPositionY += (targetGroupY - groupPositionY) * motionEasing;
+    groupRotationX += (targetRotationX - groupRotationX) * motionEasing;
+    groupRotationY += (targetRotationY - groupRotationY) * motionEasing;
+    groupRotationZ += (targetRotationZ - groupRotationZ) * motionEasing;
+    groupScale += (targetScale - groupScale) * motionEasing;
+    cameraOffsetX += (targetCameraX - cameraOffsetX) * cameraEasing;
+    cameraOffsetY += (targetCameraY - cameraOffsetY) * cameraEasing;
+    cameraOffsetZ += (targetCameraZ - cameraOffsetZ) * cameraEasing;
+    lookAtX += (targetLookAtX - lookAtX) * cameraEasing;
+    lookAtY += (targetLookAtY - lookAtY) * cameraEasing;
 
     group.position.x = groupPositionX;
     group.position.y = groupPositionY;
@@ -435,10 +479,13 @@ export function createHeroRenderer(options) {
     const interactionState = interaction
       ? interaction.getState()
       : { x: 0.5, y: 0.5, active: 0, strength: 0 };
-    const progress = typeof config.chapterProgress === "number"
+    rawScrollProgress = typeof config.chapterProgress === "number"
       ? clamp(config.chapterProgress, 0, 1)
       : getPageScrollProgress(scrollElement);
-    const narrative = buildNarrative(progress, sectionMetrics);
+    displayedScrollProgress = smoothProgress(displayedScrollProgress, rawScrollProgress, deltaTime, config);
+    const narrative = buildNarrative(displayedScrollProgress, sectionMetrics, config);
+
+    syncInteractionState(narrative);
 
     updateParticleState(
       state,
@@ -466,7 +513,9 @@ export function createHeroRenderer(options) {
     const progress = typeof config.chapterProgress === "number"
       ? clamp(config.chapterProgress, 0, 1)
       : 0;
-    const narrative = buildNarrative(progress, sectionMetrics);
+    rawScrollProgress = progress;
+    displayedScrollProgress = progress;
+    const narrative = buildNarrative(progress, sectionMetrics, config);
 
     updateParticleState(
       state,
@@ -520,13 +569,17 @@ export function createHeroRenderer(options) {
 
     applyRendererSize();
     sectionMetrics = buildSectionMetrics(scrollElement);
+    rawScrollProgress = typeof config.chapterProgress === "number"
+      ? clamp(config.chapterProgress, 0, 1)
+      : getPageScrollProgress(scrollElement);
+    displayedScrollProgress = rawScrollProgress;
     rebuildComposition();
 
     root.classList.remove("hero-animation-fallback");
     canvas.style.display = "";
 
     if (!reducedMotion) {
-      interaction = createInteractionController(interactionElement, viewportElement, config.interactionStrength);
+      interaction = createInteractionController(root, viewportElement, config.interactionStrength);
     }
 
     window.addEventListener("resize", handleResize);

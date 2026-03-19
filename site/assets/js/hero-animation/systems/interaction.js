@@ -7,7 +7,8 @@ export function createInteractionController(root, viewportElement, strength) {
     targetActive: 0,
     currentActive: 0,
     strength: strength,
-    bounds: null
+    bounds: null,
+    enabled: true
   };
 
   function updateBounds() {
@@ -15,12 +16,13 @@ export function createInteractionController(root, viewportElement, strength) {
   }
 
   function updateFromPointer(clientX, clientY) {
+    if (!state.enabled) return;
     if (!state.bounds) updateBounds();
     if (!state.bounds || !state.bounds.width || !state.bounds.height) return;
 
     state.targetX = (clientX - state.bounds.left) / state.bounds.width;
     state.targetY = (clientY - state.bounds.top) / state.bounds.height;
-    state.targetActive = 0.72;
+    state.targetActive = 0.08;
   }
 
   function handlePointerMove(event) {
@@ -33,7 +35,7 @@ export function createInteractionController(root, viewportElement, strength) {
     state.targetY = 0.5;
   }
 
-  window.addEventListener("pointermove", handlePointerMove, { passive: true });
+  root.addEventListener("pointermove", handlePointerMove, { passive: true });
   root.addEventListener("pointerleave", handlePointerLeave);
   document.addEventListener("visibilitychange", handlePointerLeave);
 
@@ -52,15 +54,23 @@ export function createInteractionController(root, viewportElement, strength) {
     setStrength(nextStrength) {
       state.strength = nextStrength;
     },
+    setEnabled(nextEnabled) {
+      state.enabled = Boolean(nextEnabled);
+
+      if (!state.enabled) {
+        handlePointerLeave();
+      }
+    },
     tick(deltaTime) {
-      const easing = 1 - Math.pow(0.001, deltaTime * 2.2);
+      const easing = 1 - Math.exp(-deltaTime * 2.25);
+      const activeEasing = 1 - Math.exp(-deltaTime * 2.3);
 
       state.currentX += (state.targetX - state.currentX) * easing;
       state.currentY += (state.targetY - state.currentY) * easing;
-      state.currentActive += (state.targetActive - state.currentActive) * (1 - Math.pow(0.001, deltaTime * 2.8));
+      state.currentActive += (state.targetActive - state.currentActive) * activeEasing;
     },
     destroy() {
-      window.removeEventListener("pointermove", handlePointerMove);
+      root.removeEventListener("pointermove", handlePointerMove);
       root.removeEventListener("pointerleave", handlePointerLeave);
       document.removeEventListener("visibilitychange", handlePointerLeave);
     }

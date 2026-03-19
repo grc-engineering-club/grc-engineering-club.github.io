@@ -69,8 +69,12 @@ function initStoryProgress() {
   ].filter(function (definition) {
     return Boolean(definition.element);
   });
-  let frameId = 0;
+  let measureFrameId = 0;
+  let animationFrameId = 0;
   let progressRevealFrame = 0;
+  let targetStoryProgress = 0;
+  let displayedStoryProgress = 0;
+  let activeIndex = 0;
 
   if (!progressRoot || sectionDefinitions.length < 2) {
     return {
@@ -105,10 +109,42 @@ function initStoryProgress() {
     });
   }
 
-  function update() {
-    frameId = 0;
+  function updateProgressDisplay() {
+    animationFrameId = 0;
+    displayedStoryProgress += (targetStoryProgress - displayedStoryProgress) * 0.14;
+
+    if (Math.abs(targetStoryProgress - displayedStoryProgress) < 0.0012) {
+      displayedStoryProgress = targetStoryProgress;
+    }
+
+    document.documentElement.style.setProperty("--story-progress-ratio", displayedStoryProgress.toFixed(4));
+
+    if (progressFill) {
+      progressFill.style.transform = "scaleY(" + displayedStoryProgress.toFixed(4) + ")";
+    }
+
+    stepElements.forEach(function (stepElement, index) {
+      const isActive = index === activeIndex;
+      const isComplete = index < activeIndex;
+
+      stepElement.classList.toggle("is-active", isActive);
+      stepElement.classList.toggle("is-complete", isComplete);
+    });
+
+    sectionDefinitions.forEach(function (definition, index) {
+      definition.element.classList.toggle("is-story-active", index === activeIndex);
+      definition.element.classList.toggle("is-story-past", index < activeIndex);
+    });
+
+    if (Math.abs(targetStoryProgress - displayedStoryProgress) >= 0.0012) {
+      animationFrameId = window.requestAnimationFrame(updateProgressDisplay);
+    }
+  }
+
+  function measureProgress() {
+    measureFrameId = 0;
     const anchor = window.scrollY + window.innerHeight * 0.42;
-    let activeIndex = 0;
+    let nextActiveIndex = 0;
 
     for (let index = 0; index < sectionDefinitions.length; index += 1) {
       const definition = sectionDefinitions[index];
@@ -116,12 +152,13 @@ function initStoryProgress() {
       const top = window.scrollY + rect.top;
 
       if (anchor >= top) {
-        activeIndex = index;
+        nextActiveIndex = index;
       } else {
         break;
       }
     }
 
+    activeIndex = nextActiveIndex;
     const current = sectionDefinitions[activeIndex];
     const next = sectionDefinitions[Math.min(activeIndex + 1, sectionDefinitions.length - 1)];
     let segmentProgress = 1;
@@ -138,48 +175,39 @@ function initStoryProgress() {
     const storyProgress = clamp((activeIndex + segmentProgress) / totalSteps, 0, 1);
 
     document.body.dataset.storySection = current.key;
-    document.documentElement.style.setProperty("--story-progress-ratio", storyProgress.toFixed(4));
+    targetStoryProgress = storyProgress;
 
     if (progressRoot) {
       const showProgress = current.key !== "hero" && current.key !== "footer";
       setProgressVisibility(showProgress);
     }
 
-    if (progressFill) {
-      progressFill.style.transform = "scaleY(" + storyProgress.toFixed(4) + ")";
-    }
-
-    stepElements.forEach(function (stepElement, index) {
-      const isActive = index === activeIndex;
-      const isComplete = index < activeIndex;
-
-      stepElement.classList.toggle("is-active", isActive);
-      stepElement.classList.toggle("is-complete", isComplete);
-    });
-
-    sectionDefinitions.forEach(function (definition, index) {
-      definition.element.classList.toggle("is-story-active", index === activeIndex);
-      definition.element.classList.toggle("is-story-past", index < activeIndex);
-    });
-  }
-
-  function queueUpdate() {
-    if (!frameId) {
-      frameId = window.requestAnimationFrame(update);
+    if (!animationFrameId) {
+      animationFrameId = window.requestAnimationFrame(updateProgressDisplay);
     }
   }
 
-  window.addEventListener("scroll", queueUpdate, { passive: true });
-  window.addEventListener("resize", queueUpdate);
-  queueUpdate();
+  function queueMeasure() {
+    if (!measureFrameId) {
+      measureFrameId = window.requestAnimationFrame(measureProgress);
+    }
+  }
+
+  window.addEventListener("scroll", queueMeasure, { passive: true });
+  window.addEventListener("resize", queueMeasure);
+  queueMeasure();
 
   return {
     destroy() {
-      window.removeEventListener("scroll", queueUpdate);
-      window.removeEventListener("resize", queueUpdate);
+      window.removeEventListener("scroll", queueMeasure);
+      window.removeEventListener("resize", queueMeasure);
 
-      if (frameId) {
-        window.cancelAnimationFrame(frameId);
+      if (measureFrameId) {
+        window.cancelAnimationFrame(measureFrameId);
+      }
+
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
       }
 
       if (progressRevealFrame) {
@@ -194,7 +222,6 @@ function initHomePage() {
   const canvas = document.getElementById("hero-canvas");
   const viewportElement = document.querySelector(".page-visual-stage");
   const scrollElement = document.documentElement;
-  const interactionElement = document.body;
 
   if (!root || !canvas || !viewportElement) return;
 
@@ -204,8 +231,7 @@ function initHomePage() {
     root: root,
     canvas: canvas,
     viewportElement: viewportElement,
-    scrollElement: scrollElement,
-    interactionElement: interactionElement
+    scrollElement: scrollElement
   });
 
   const revealController = initRevealSystem();

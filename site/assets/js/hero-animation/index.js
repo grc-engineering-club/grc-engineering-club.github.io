@@ -8,7 +8,6 @@ export function initHeroAnimation(options) {
   const canvas = options.canvas;
   const viewportElement = options.viewportElement;
   const scrollElement = options.scrollElement || document.documentElement;
-  const interactionElement = options.interactionElement || document.body;
   let theme = options.theme || (window.getEffectiveTheme ? window.getEffectiveTheme() : "dark");
   let userConfig = options.config || {};
   let resolvedConfig = resolveHeroAnimationConfig(userConfig, {
@@ -23,7 +22,6 @@ export function initHeroAnimation(options) {
     canvas: canvas,
     viewportElement: viewportElement,
     scrollElement: scrollElement,
-    interactionElement: interactionElement,
     config: resolvedConfig,
     theme: theme
   });

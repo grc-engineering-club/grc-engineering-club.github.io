@@ -165,8 +165,6 @@ export function createParticleState(samples, palette, camera, isMobile, useEntra
 export function updateParticleState(state, frame, interaction, config, entranceProgress, narrative) {
   const deltaTime = frame.deltaTime;
   const elapsed = frame.elapsed;
-  const interactionRadius = config.pointerRadius;
-  const interactionStrength = interaction.strength || config.interactionStrength;
   const scatterMix = narrative.scatterMix;
   const depthPush = narrative.depthPush;
   const chaos = narrative.chaos;
@@ -175,7 +173,7 @@ export function updateParticleState(state, frame, interaction, config, entranceP
   const fromFormation = narrative.fromFormation;
   const toFormation = narrative.toFormation;
   const tension = narrative.tension || 0;
-  const damping = 1 - clamp(deltaTime * (3.8 + chaos * 0.9 + dispersion * 1.2 + reassembly * 1), 0.06, 0.18);
+  const damping = 1 - clamp(deltaTime * (2.6 + chaos * 0.45 + dispersion * 0.68 + reassembly * 0.52), 0.035, 0.1);
   const entranceMix = smoothOut(entranceProgress);
   const formationStride3 = FORMATION_COUNT * 3;
   const formationStride2 = FORMATION_COUNT * 2;
@@ -197,18 +195,18 @@ export function updateParticleState(state, frame, interaction, config, entranceP
     const rogueWeight = state.rogueWeight[index];
     const depthFactor = state.depthFactor[index];
     const orderWeight = state.orderWeight[index];
-    const timeA = elapsed * (0.18 + flow) + phase;
-    const timeB = elapsed * (0.14 + noise * 0.9) + phase * 1.17;
+    const timeA = elapsed * (0.08 + flow * 0.44) + phase;
+    const timeB = elapsed * (0.06 + noise * 0.42) + phase * 1.17;
     const fromWave = Math.sin(timeA);
-    const toWave = Math.sin(elapsed * (0.24 + flow * 0.52) + phase * 0.62);
-    const scatterWave = Math.cos(elapsed * (0.32 + flow * 0.6) + phase * 0.74);
-    const fromMotionX = state.formationOrbit[fromOffset2] * fromWave * (0.1 + flow * 0.26) * (0.42 + depthFactor * 0.54);
-    const fromMotionY = state.formationOrbit[fromOffset2 + 1] * fromWave * (0.09 + flow * 0.22) * (0.38 + depthFactor * 0.48);
-    const toMotionX = state.formationOrbit[toOffset2] * toWave * (0.08 + orderWeight * 0.12) * (0.34 + reassembly * 0.58);
-    const toMotionY = state.formationOrbit[toOffset2 + 1] * toWave * (0.08 + orderWeight * 0.11) * (0.32 + reassembly * 0.52);
-    const chaosAmplitude = (0.14 + rogueWeight * 0.28 + foregroundWeight * 0.18) * (0.34 + chaos * 1.12 + dispersion * 0.74 + tension * 0.18);
+    const toWave = Math.sin(elapsed * (0.1 + flow * 0.36) + phase * 0.62);
+    const scatterWave = Math.cos(elapsed * (0.12 + flow * 0.32) + phase * 0.74);
+    const fromMotionX = state.formationOrbit[fromOffset2] * fromWave * (0.045 + flow * 0.1) * (0.3 + depthFactor * 0.28);
+    const fromMotionY = state.formationOrbit[fromOffset2 + 1] * fromWave * (0.04 + flow * 0.08) * (0.28 + depthFactor * 0.22);
+    const toMotionX = state.formationOrbit[toOffset2] * toWave * (0.04 + orderWeight * 0.04) * (0.22 + reassembly * 0.24);
+    const toMotionY = state.formationOrbit[toOffset2 + 1] * toWave * (0.038 + orderWeight * 0.04) * (0.2 + reassembly * 0.22);
+    const chaosAmplitude = (0.045 + rogueWeight * 0.08 + foregroundWeight * 0.08) * (0.28 + chaos * 0.42 + dispersion * 0.22 + tension * 0.08);
     const scatterMotionX = state.drift[driftIndex] * scatterWave * chaosAmplitude;
-    const scatterMotionY = state.drift[driftIndex + 1] * Math.sin(elapsed * (0.22 + noise * 0.7) + phase) * chaosAmplitude * 0.78;
+    const scatterMotionY = state.drift[driftIndex + 1] * Math.sin(elapsed * (0.1 + noise * 0.32) + phase) * chaosAmplitude * 0.68;
 
     let targetX = mix(
       state.formations[fromOffset3] + fromMotionX,
@@ -221,8 +219,8 @@ export function updateParticleState(state, frame, interaction, config, entranceP
       scatterMix
     );
     let targetZ = mix(
-      state.formations[fromOffset3 + 2] + Math.cos(timeB) * (0.24 + depthFactor * 0.52),
-      state.scatter[offsetIndex + 2] + Math.sin(timeA) * (0.54 + rogueWeight * 1.2 + foregroundWeight * 0.88) * (0.22 + chaos),
+      state.formations[fromOffset3 + 2] + Math.cos(timeB) * (0.12 + depthFactor * 0.2),
+      state.scatter[offsetIndex + 2] + Math.sin(timeA) * (0.2 + rogueWeight * 0.42 + foregroundWeight * 0.34) * (0.12 + chaos * 0.28),
       scatterMix
     );
 
@@ -230,32 +228,9 @@ export function updateParticleState(state, frame, interaction, config, entranceP
     targetY = mix(targetY, state.formations[toOffset3 + 1] + toMotionY, reassembly);
     targetZ = mix(
       targetZ,
-      state.formations[toOffset3 + 2] + Math.cos(timeA * 0.92) * (0.32 + orderWeight * 0.62),
+      state.formations[toOffset3 + 2] + Math.cos(timeA * 0.92) * (0.14 + orderWeight * 0.18),
       reassembly
     );
-
-    const pointerU = mix(
-      mix(state.formationUv[fromOffset2], state.scatterUv[driftIndex], scatterMix),
-      state.formationUv[toOffset2],
-      reassembly
-    );
-    const pointerV = mix(
-      mix(state.formationUv[fromOffset2 + 1], state.scatterUv[driftIndex + 1], scatterMix),
-      state.formationUv[toOffset2 + 1],
-      reassembly
-    );
-    const pointerDx = pointerU - interaction.x;
-    const pointerDy = pointerV - interaction.y;
-    const pointerDistance = Math.hypot(pointerDx, pointerDy);
-    const pointerFalloff = pointerDistance < interactionRadius
-      ? Math.pow(1 - pointerDistance / interactionRadius, 2)
-      : 0;
-    const pointerForce = pointerFalloff * interaction.active * interactionStrength * state.interactionWeight[index];
-    const pointerScale = 4.6 + depthPush * 1.8 + foregroundWeight * 1.6 + chaos * 0.8;
-
-    targetX += pointerDx * pointerForce * pointerScale;
-    targetY += pointerDy * pointerForce * (4.2 + foregroundWeight * 1.2 + chaos * 0.8);
-    targetZ += pointerForce * (1.2 + depthFactor * 1.4 + foregroundWeight * 1.2);
 
     if (entranceMix < 1) {
       targetX = mix(state.entrance[offsetIndex], targetX, entranceMix);
@@ -263,11 +238,11 @@ export function updateParticleState(state, frame, interaction, config, entranceP
       targetZ = mix(state.entrance[offsetIndex + 2], targetZ, entranceMix);
     }
 
-    const spring = state.returnStrength[index] * (0.76 + depthPush * 0.34 + dispersion * 0.28 + chaos * 0.22 + reassembly * 0.28);
+    const spring = state.returnStrength[index] * (0.44 + depthPush * 0.16 + dispersion * 0.14 + chaos * 0.12 + reassembly * 0.12);
 
     state.velocity[offsetIndex] += (targetX - state.current[offsetIndex]) * deltaTime * spring;
     state.velocity[offsetIndex + 1] += (targetY - state.current[offsetIndex + 1]) * deltaTime * spring;
-    state.velocity[offsetIndex + 2] += (targetZ - state.current[offsetIndex + 2]) * deltaTime * spring * 0.9;
+    state.velocity[offsetIndex + 2] += (targetZ - state.current[offsetIndex + 2]) * deltaTime * spring * 0.78;
     state.velocity[offsetIndex] *= damping;
     state.velocity[offsetIndex + 1] *= damping;
     state.velocity[offsetIndex + 2] *= damping;
@@ -276,22 +251,22 @@ export function updateParticleState(state, frame, interaction, config, entranceP
     state.current[offsetIndex + 2] += state.velocity[offsetIndex + 2];
 
     const scaleBoost = 1
-      + depthPush * (0.14 + depthFactor * 0.1)
-      + dispersion * (depthFactor * 0.14 + foregroundWeight * 0.38)
-      + chaos * (ambientWeight * 0.08 + foregroundWeight * 0.2 + rogueWeight * 0.04)
-      + reassembly * orderWeight * 0.14;
+      + depthPush * (0.08 + depthFactor * 0.06)
+      + dispersion * (depthFactor * 0.06 + foregroundWeight * 0.12)
+      + chaos * (ambientWeight * 0.03 + foregroundWeight * 0.08 + rogueWeight * 0.02)
+      + reassembly * orderWeight * 0.06;
     const alphaBoost = clamp(
-      (0.98 + depthPush * 0.12 + dispersion * 0.42 + chaos * 0.1 + reassembly * 0.14) * config.colorIntensity,
+      (0.94 + depthPush * 0.08 + dispersion * 0.18 + chaos * 0.06 + reassembly * 0.08) * config.colorIntensity,
       0.4,
       1.6
     );
     const appearanceMix = entranceMix < 1 ? mix(0.08, 1, entranceMix) : 1;
-    const spinRate = state.spins[index] * config.rotateSpeed * (0.72 + dispersion * 2.8 + chaos * 0.9 + reassembly * 0.44);
+    const spinRate = state.spins[index] * config.rotateSpeed * (0.44 + dispersion * 0.48 + chaos * 0.2 + reassembly * 0.16);
 
     state.scales[index] = state.scalesBase[index] * scaleBoost * appearanceMix;
     state.alpha[index] = clamp(state.alphaBase[index] * alphaBoost * appearanceMix, 0.02, 1.28);
     state.angles[index] = state.angleBase[index]
       + elapsed * spinRate
-      + Math.sin(elapsed * (0.86 + flow) + phase) * (0.24 + rogueWeight * 0.22);
+      + Math.sin(elapsed * (0.22 + flow * 0.24) + phase) * (0.06 + rogueWeight * 0.06);
   }
 }

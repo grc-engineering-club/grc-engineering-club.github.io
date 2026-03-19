@@ -1,10 +1,10 @@
 const BASE_REFERENCE_AREA = 1440 * 980;
 
 export const HERO_QUALITY_PRESETS = {
-  high: { mainCount: 1380, ambientCount: 420, foregroundCount: 92, dprClamp: 1.65 },
-  medium: { mainCount: 1120, ambientCount: 320, foregroundCount: 68, dprClamp: 1.4 },
-  low: { mainCount: 840, ambientCount: 220, foregroundCount: 44, dprClamp: 1.2 },
-  mobile: { mainCount: 680, ambientCount: 148, foregroundCount: 28, dprClamp: 1.1 }
+  high: { mainCount: 980, ambientCount: 220, foregroundCount: 18, dprClamp: 1.55 },
+  medium: { mainCount: 780, ambientCount: 176, foregroundCount: 14, dprClamp: 1.35 },
+  low: { mainCount: 560, ambientCount: 132, foregroundCount: 10, dprClamp: 1.18 },
+  mobile: { mainCount: 440, ambientCount: 84, foregroundCount: 8, dprClamp: 1.06 }
 };
 
 export const HERO_COLOR_PALETTES = {
@@ -31,18 +31,27 @@ export const DEFAULT_HERO_ANIMATION_CONFIG = {
   particleCount: null,
   ambientCount: null,
   foregroundCount: null,
-  shapeScale: 1.34,
+  shapeScale: 0.98,
   shapeMode: "grc",
-  interactionStrength: 0.46,
-  scatterDistance: 2.9,
-  rotateSpeed: 1.42,
-  driftSpeed: 1.12,
-  colorIntensity: 1.26,
+  interactionStrength: 0.006,
+  motionEasing: 1.7,
+  cameraEasing: 0.8,
+  scrollSmoothing: 3.6,
+  scrollVelocityClamp: 0.24,
+  reassemblyWindow: 0.56,
+  scatterDistance: 2.15,
+  rotateSpeed: 0.58,
+  driftSpeed: 0.42,
+  idleRotationStrength: 0.82,
+  idleDriftStrength: 0.64,
+  pointerRotationStrength: 0.05,
+  cameraDriftStrength: 0.06,
+  colorIntensity: 1.08,
   chapterProgress: null,
   entranceEnabled: true,
   colorPalette: HERO_COLOR_PALETTES.dark,
   entranceDurationMs: 1950,
-  pointerRadius: 0.22
+  pointerRadius: 0.16
 };
 
 export function clamp(value, min, max) {

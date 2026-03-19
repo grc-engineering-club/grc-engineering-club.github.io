@@ -13,30 +13,30 @@ bodyClass: page-home
     </div>
     <div class="hero-visual-vignette"></div>
     <aside class="story-progress" aria-hidden="true" hidden>
-      <p class="story-progress-label">Signal path</p>
+      <p class="story-progress-label">Hiring flow</p>
       <div class="story-progress-track">
         <span class="story-progress-fill"></span>
       </div>
       <ol class="story-progress-steps">
         <li class="story-progress-step" data-story-step="hero">
           <span class="story-progress-dot"></span>
-          <span class="story-progress-text">Assemble</span>
+          <span class="story-progress-text">Build shortlist</span>
         </li>
         <li class="story-progress-step" data-story-step="browse">
           <span class="story-progress-dot"></span>
-          <span class="story-progress-text">Collapse</span>
+          <span class="story-progress-text">Filter by fit</span>
         </li>
         <li class="story-progress-step" data-story-step="directory">
           <span class="story-progress-dot"></span>
-          <span class="story-progress-text">Compare</span>
+          <span class="story-progress-text">Compare profiles</span>
         </li>
         <li class="story-progress-step" data-story-step="insights">
           <span class="story-progress-dot"></span>
-          <span class="story-progress-text">See coverage</span>
+          <span class="story-progress-text">Check coverage</span>
         </li>
         <li class="story-progress-step" data-story-step="footer">
           <span class="story-progress-dot"></span>
-          <span class="story-progress-text">Resolve</span>
+          <span class="story-progress-text">Reach out</span>
         </li>
       </ol>
     </aside>
@@ -46,9 +46,9 @@ bodyClass: page-home
 <section class="hero landing-hero" id="hero" data-story-section="hero">
   <div class="hero-shell">
     <div class="hero-copy" data-reveal="rise">
-      <p class="section-kicker">Curated GRC talent directory</p>
-      <h1>Find GRC engineers who can turn control work into operating systems.</h1>
-      <p class="hero-tagline">Explore practitioners across audit readiness, cloud security, evidence automation, vendor risk, and implementation-minded compliance work without leaving the page.</p>
+      <p class="section-kicker">GRC hiring directory</p>
+      <h1>Find GRC engineers with the capability your team needs.</h1>
+      <p class="hero-tagline">Filter candidates by specialization, frameworks, certifications, tools, and availability to build a focused shortlist fast.</p>
       <div class="hero-actions">
         <a href="#browse-directory" class="btn btn-primary btn-hero">Browse engineers</a>
         <a href="/submit/" class="btn btn-outline btn-hero-alt">Join the directory</a>
@@ -57,62 +57,62 @@ bodyClass: page-home
         <article class="hero-stat-card">
           <p class="hero-stat-label">Engineers</p>
           <span class="hero-stat-num" data-target="{{ collections.engineers.length }}">0</span>
-          <p class="hero-stat-copy">Profiles from hands-on operators and builders.</p>
+          <p class="hero-stat-copy">Profiles with practical implementation experience.</p>
         </article>
         <article class="hero-stat-card">
           <p class="hero-stat-label">Frameworks</p>
           <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('frameworks') | length }}">0</span>
-          <p class="hero-stat-copy">Coverage across modern assurance and regulatory work.</p>
+          <p class="hero-stat-copy">Mapped to current assurance and compliance work.</p>
         </article>
         <article class="hero-stat-card">
           <p class="hero-stat-label">Certifications</p>
           <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('certifications') | length }}">0</span>
-          <p class="hero-stat-copy">Signal for buyers who need depth, not generic resumes.</p>
+          <p class="hero-stat-copy">Hiring teams can compare practical qualification details.</p>
         </article>
       </div>
     </div>
 
     <aside class="hero-panel" data-reveal="right">
-      <p class="hero-panel-kicker">Balanced for signal</p>
-      <h2>Search by framework, specialization, certifications, tools, and availability from a single surface.</h2>
-      <p class="hero-panel-copy">This landing page keeps the premium visual treatment up front, but the directory remains one jump away and the filters stay fast, keyboard-friendly, and shareable.</p>
+      <p class="hero-panel-kicker">Find right-fit candidates faster</p>
+      <h2>Filter candidates by specialization, frameworks, certifications, tools, and availability.</h2>
+      <p class="hero-panel-copy">Start with a keyword, then narrow by fit to create a shortlist you can review and compare.</p>
       <div class="hero-panel-grid">
         <div class="hero-panel-item">
-          <span class="hero-panel-label">Availability modes</span>
+          <span class="hero-panel-label">Availability</span>
           <strong>{{ collections.engineers | uniqueValues('available_for') | length }}</strong>
         </div>
         <div class="hero-panel-item">
-          <span class="hero-panel-label">Languages & tools</span>
+          <span class="hero-panel-label">Languages and tools</span>
           <strong>{{ collections.engineers | uniqueValues('languages') | length }}</strong>
         </div>
         <div class="hero-panel-item">
-          <span class="hero-panel-label">Search shortcut</span>
+          <span class="hero-panel-label">Keyboard shortcut</span>
           <strong>/</strong>
         </div>
         <div class="hero-panel-item">
-          <span class="hero-panel-label">Primary flow</span>
+          <span class="hero-panel-label">Quick workflow</span>
           <strong>Browse, filter, shortlist</strong>
         </div>
       </div>
-      <a href="#browse-directory" class="hero-panel-link">Jump into the filter surface</a>
+      <a href="#browse-directory" class="hero-panel-link">Start building your shortlist</a>
     </aside>
   </div>
 
   <div class="hero-signal-strip" data-reveal-stagger>
     <article class="signal-card" data-reveal="rise">
       <p class="signal-label">Who it serves</p>
-      <h2>Hiring teams who need operators, not only policy writers.</h2>
-      <p>Use the directory to quickly spot engineers comfortable with evidence, systems, tooling, and implementation detail.</p>
+      <h2>Recruiters and hiring teams sourcing GRC engineers.</h2>
+      <p>Find engineers comfortable with evidence, systems, tooling, and implementation detail.</p>
     </article>
     <article class="signal-card" data-reveal="rise">
-      <p class="signal-label">How to use it</p>
-      <h2>Start broad, then collapse the field fast.</h2>
-      <p>Search by role or problem, stack framework filters, and narrow by certifications, tools, and delivery mode.</p>
+      <p class="signal-label">How teams use this</p>
+      <h2>Build a shortlist, then filter by fit.</h2>
+      <p>Search by role or problem, then narrow by certifications, tools, specialization, and availability.</p>
     </article>
     <article class="signal-card" data-reveal="rise">
-      <p class="signal-label">Why it feels different</p>
-      <h2>More signal density, less directory sludge.</h2>
-      <p>The landing experience is brand-led, but the product still moves directly into candidate discovery and comparison.</p>
+      <p class="signal-label">Why it helps</p>
+      <h2>Compare candidates on the attributes hiring teams evaluate first.</h2>
+      <p>Use practical filters to evaluate specialization fit, framework depth, certifications, and availability side by side.</p>
     </article>
   </div>
 </section>
@@ -121,10 +121,10 @@ bodyClass: page-home
   <div class="browse-shell">
     <div class="browse-header" data-reveal="left">
       <div>
-        <p class="section-kicker">Browse the directory</p>
-        <h2 id="browse-title">Move from atmosphere to signal without losing context.</h2>
+        <p class="section-kicker">Search candidates</p>
+        <h2 id="browse-title">Filter to the candidates that match your role.</h2>
       </div>
-      <p class="browse-copy">Press <kbd>/</kbd> to jump straight to search, or start with the filter groups below to narrow the field in-place.</p>
+      <p class="browse-copy">Press <kbd>/</kbd> to jump to search, or start with the filter groups below to narrow results in place.</p>
     </div>
 
     <div class="browse-surface" data-reveal="right">
@@ -136,8 +136,8 @@ bodyClass: page-home
 <section class="directory landing-directory" aria-labelledby="directory-title" data-story-section="directory">
   <div class="directory-header" data-reveal="left">
     <div>
-      <p class="section-kicker">Directory results</p>
-      <h2 id="directory-title">Current matching engineers</h2>
+      <p class="section-kicker">Matching candidates</p>
+      <h2 id="directory-title">Current candidates matching your filters</h2>
     </div>
     <p class="results-count"><span id="results-count">{{ collections.engineers.length }}</span> engineers</p>
   </div>
@@ -152,10 +152,10 @@ bodyClass: page-home
 <section class="insights landing-insights" id="community-insights" aria-labelledby="insights-title" data-story-section="insights">
   <div class="insights-header" data-reveal="left">
     <div>
-      <p class="section-kicker">Community pulse</p>
-      <h2 id="insights-title">See how the directory is distributed right now.</h2>
+      <p class="section-kicker">Hiring snapshot</p>
+      <h2 id="insights-title">See where candidate strength is concentrated.</h2>
     </div>
-    <p class="insights-copy">The charts below keep the page useful after the first impression by showing where coverage is already strong and where niche experience concentrates.</p>
+    <p class="insights-copy">These charts show current depth by specialization, framework, certification, and availability before you decide who to contact.</p>
   </div>
   <div class="insights-grid" data-reveal-stagger>
     <div class="insight-card" data-reveal="rise">
@@ -171,7 +171,7 @@ bodyClass: page-home
       <canvas id="chart-available"></canvas>
     </div>
     <div class="insight-card" data-reveal="rise">
-      <h3>Languages & Tools</h3>
+      <h3>Languages and tools</h3>
       <canvas id="chart-languages"></canvas>
     </div>
   </div>

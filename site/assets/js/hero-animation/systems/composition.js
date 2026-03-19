@@ -89,22 +89,46 @@ function makeZone(centerX, centerY, radiusX, radiusY, weight, softness) {
 function buildZones(layout, isMobile) {
   const headline = layout.headline || layout.copy;
   const copy = layout.copy || headline;
+  const tagline = layout.tagline || copy;
+  const stats = layout.stats;
   const panel = layout.panel;
   const headlineZone = headline
-    ? expandRect(headline, isMobile ? 0.78 : 0.56, isMobile ? 0.58 : 0.38)
-    : { centerX: 0.28, centerY: 0.36, radiusX: 0.26, radiusY: 0.16 };
+    ? expandRect(headline, isMobile ? 0.94 : 0.8, isMobile ? 0.76 : 0.58)
+    : { centerX: 0.28, centerY: 0.36, radiusX: 0.28, radiusY: 0.19 };
   const copyZone = copy
-    ? expandRect(copy, isMobile ? 0.52 : 0.38, isMobile ? 0.34 : 0.26)
+    ? expandRect(copy, isMobile ? 0.7 : 0.56, isMobile ? 0.46 : 0.34)
     : headlineZone;
+  const taglineZone = tagline
+    ? expandRect(tagline, isMobile ? 0.66 : 0.5, isMobile ? 0.46 : 0.34)
+    : copyZone;
+  const statsZone = stats
+    ? expandRect(stats, isMobile ? 0.72 : 0.58, isMobile ? 0.52 : 0.3)
+    : null;
   const panelZone = panel
-    ? expandRect(panel, isMobile ? 0.46 : 0.34, isMobile ? 0.56 : 0.68)
+    ? expandRect(panel, isMobile ? 0.56 : 0.48, isMobile ? 0.72 : 0.84)
     : { centerX: 0.78, centerY: 0.56, radiusX: 0.16, radiusY: 0.2 };
+  const leftSafeZone = makeZone(
+    isMobile ? 0.5 : 0.18,
+    isMobile ? 0.36 : 0.38,
+    isMobile ? 0.34 : 0.22,
+    isMobile ? 0.3 : 0.34,
+    isMobile ? 1.3 : 1.8,
+    isMobile ? 1.06 : 1.08
+  );
 
-  return [
-    makeZone(headlineZone.centerX, headlineZone.centerY, headlineZone.radiusX, headlineZone.radiusY, 1.08, 1.08),
-    makeZone(copyZone.centerX, copyZone.centerY, copyZone.radiusX, copyZone.radiusY, 0.68, 1.02),
-    makeZone(panelZone.centerX, panelZone.centerY, panelZone.radiusX, panelZone.radiusY, 0.92, 1.02)
+  const zones = [
+    leftSafeZone,
+    makeZone(headlineZone.centerX, headlineZone.centerY, headlineZone.radiusX, headlineZone.radiusY, 1.9, 1.0),
+    makeZone(copyZone.centerX, copyZone.centerY, copyZone.radiusX, copyZone.radiusY, 1.45, 1.02),
+    makeZone(taglineZone.centerX, taglineZone.centerY, taglineZone.radiusX, taglineZone.radiusY, 1.2, 1.04),
+    makeZone(panelZone.centerX, panelZone.centerY, panelZone.radiusX, panelZone.radiusY, 1.38, 1.0)
   ];
+
+  if (statsZone) {
+    zones.push(makeZone(statsZone.centerX, statsZone.centerY, statsZone.radiusX, statsZone.radiusY, 0.84, 1.0));
+  }
+
+  return zones;
 }
 
 function deriveHeroShape(layout, isMobile, shapeScale) {
@@ -112,10 +136,10 @@ function deriveHeroShape(layout, isMobile, shapeScale) {
   const copy = layout.copy || layout.headline || { left: 0.08, centerX: 0.28, top: 0.16 };
 
   return {
-    centerX: isMobile ? 0.78 : clamp(panel.centerX + 0.08, 0.8, 0.94),
-    centerY: isMobile ? 0.34 : clamp(copy.top * 0.24 + 0.34, 0.32, 0.42),
-    radiusX: clamp((isMobile ? 0.38 : 0.54) * shapeScale, 0.32, isMobile ? 0.46 : 0.72),
-    radiusY: clamp((isMobile ? 0.32 : 0.42) * shapeScale, 0.24, isMobile ? 0.4 : 0.58)
+    centerX: isMobile ? 0.72 : clamp(panel.centerX + 0.12, 0.8, 0.92),
+    centerY: isMobile ? 0.3 : clamp(copy.top * 0.16 + 0.3, 0.26, 0.36),
+    radiusX: clamp((isMobile ? 0.32 : 0.44) * shapeScale, 0.26, isMobile ? 0.4 : 0.58),
+    radiusY: clamp((isMobile ? 0.26 : 0.34) * shapeScale, 0.2, isMobile ? 0.34 : 0.46)
   };
 }
 
@@ -169,7 +193,7 @@ function makeSample(u, v, z, anchorX, anchorY, orbitX, orbitY, depthFactor, orde
 }
 
 function sampleHeroObject(shape, zones, layerFamily, shapeMode) {
-  const penaltyLimit = layerFamily === "ambient" ? 0.54 : layerFamily === "foreground" ? 0.46 : 0.82;
+  const penaltyLimit = layerFamily === "ambient" ? 0.46 : layerFamily === "foreground" ? 0.34 : 0.64;
 
   for (let tries = 0; tries < 140; tries += 1) {
     const modeRoll = Math.random();
@@ -182,46 +206,46 @@ function sampleHeroObject(shape, zones, layerFamily, shapeMode) {
     let orderWeight = 0.92;
     let rogueWeight = 0.12;
 
-    if (modeRoll < 0.42) {
+    if (modeRoll < 0.56) {
       const angle = randomBetween(0, Math.PI * 2);
-      const baseRadius = randomBetween(0.78, 1.12);
-      const lobeWarp = Math.sin(angle * 2 + 0.45) * 0.16 + Math.cos(angle * 3.2) * 0.07;
-      const verticalWarp = Math.sin(angle * 1.8 + 0.7) * 0.08;
+      const baseRadius = randomBetween(0.76, 1.02);
+      const lobeWarp = Math.sin(angle * 2 + 0.45) * 0.11 + Math.cos(angle * 3.2) * 0.05;
+      const verticalWarp = Math.sin(angle * 1.8 + 0.7) * 0.05;
 
       u = shape.centerX + Math.cos(angle) * shape.radiusX * (baseRadius + lobeWarp);
-      v = shape.centerY + Math.sin(angle) * shape.radiusY * (baseRadius * 0.82 + verticalWarp);
-      z = randomBetween(-13.2, 8.4) + Math.cos(angle - 0.24) * 5.4;
+      v = shape.centerY + Math.sin(angle) * shape.radiusY * (baseRadius * 0.8 + verticalWarp);
+      z = randomBetween(-10.2, 5.6) + Math.cos(angle - 0.24) * 3.6;
       orbitX = -Math.sin(angle);
       orbitY = Math.cos(angle);
       depthFactor = clamp(0.42 + Math.cos(angle - 0.18) * 0.42, 0.14, 1);
-      rogueWeight = randomBetween(0.04, 0.18);
-    } else if (modeRoll < 0.7) {
+      rogueWeight = randomBetween(0.03, 0.12);
+    } else if (modeRoll < 0.86) {
       const side = Math.random() < 0.5 ? -1 : 1;
       const lobeCenterX = shape.centerX + side * shape.radiusX * 0.18;
       const lobeCenterY = shape.centerY + randomBetween(-shape.radiusY * 0.08, shape.radiusY * 0.08);
       const localAngle = randomBetween(0, Math.PI * 2);
-      const localRadius = Math.sqrt(Math.random()) * randomBetween(0.18, 0.94);
+      const localRadius = Math.sqrt(Math.random()) * randomBetween(0.18, 0.82);
 
       u = lobeCenterX + Math.cos(localAngle) * shape.radiusX * 0.36 * localRadius;
       v = lobeCenterY + Math.sin(localAngle) * shape.radiusY * 0.42 * localRadius;
-      z = randomBetween(-14.6, 4.2) + (1 - localRadius * localRadius) * 8.2;
+      z = randomBetween(-10.8, 3.6) + (1 - localRadius * localRadius) * 5.8;
       orbitX = -Math.sin(localAngle);
       orbitY = Math.cos(localAngle);
       depthFactor = clamp(0.3 + (1 - localRadius) * 0.74, 0.18, 1);
-      orderWeight = randomBetween(0.74, 0.94);
-      rogueWeight = randomBetween(0.08, 0.22);
+      orderWeight = randomBetween(0.84, 0.98);
+      rogueWeight = randomBetween(0.05, 0.16);
     } else {
       const t = randomBetween(-1, 1);
-      const ribWave = Math.sin(t * 7.8 + randomBetween(-0.4, 0.4)) * shape.radiusX * (shapeMode === "orbital" ? 0.08 : 0.12);
+      const ribWave = Math.sin(t * 6.4 + randomBetween(-0.28, 0.28)) * shape.radiusX * (shapeMode === "orbital" ? 0.06 : 0.085);
 
-      u = shape.centerX - shape.radiusX * 0.06 + ribWave + randomBetween(-0.028, 0.028);
+      u = shape.centerX - shape.radiusX * 0.02 + ribWave + randomBetween(-0.02, 0.02);
       v = shape.centerY + t * shape.radiusY * 0.88;
-      z = randomBetween(-11.2, 5.8) + Math.cos(t * Math.PI) * 4.4;
+      z = randomBetween(-9.8, 4.2) + Math.cos(t * Math.PI) * 3.2;
       orbitX = Math.cos(t * 4.6);
       orbitY = Math.sin(t * 4.6);
       depthFactor = clamp(0.28 + (1 - Math.abs(t)) * 0.66, 0.16, 1);
-      orderWeight = randomBetween(0.8, 0.98);
-      rogueWeight = randomBetween(0.08, 0.2);
+      orderWeight = randomBetween(0.88, 1);
+      rogueWeight = randomBetween(0.05, 0.14);
     }
 
     if (!pointInExtendedFrame(u, v) || zonePenalty(u, v, zones) > penaltyLimit) continue;
@@ -429,21 +453,21 @@ function sampleAmbient(primaryShape, zones, isMobile) {
     let u = 0;
     let v = 0;
 
-    if (region < 0.24) {
-      u = randomBetween(-0.12, 0.34);
-      v = randomBetween(0.08, 0.88);
-    } else if (region < 0.46) {
-      u = randomBetween(0.18, 1.16);
-      v = randomBetween(-0.08, 0.26);
-    } else if (region < 0.72) {
-      u = randomBetween(0.68, 1.18);
-      v = randomBetween(0.12, isMobile ? 1.04 : 0.9);
+    if (region < 0.08) {
+      u = randomBetween(-0.02, 0.18);
+      v = randomBetween(0.14, 0.82);
+    } else if (region < 0.52) {
+      u = randomBetween(0.54, 1.18);
+      v = randomBetween(-0.1, 0.32);
+    } else if (region < 0.86) {
+      u = randomBetween(0.72, 1.18);
+      v = randomBetween(0.1, isMobile ? 0.94 : 0.78);
     } else {
-      u = randomBetween(0.04, 1.04);
-      v = randomBetween(0.62, 1.08);
+      u = randomBetween(0.52, 1.06);
+      v = randomBetween(0.58, 1.02);
     }
 
-    if (!pointInExtendedFrame(u, v) || zonePenalty(u, v, zones) > 0.58) continue;
+    if (!pointInExtendedFrame(u, v) || zonePenalty(u, v, zones) > 0.42) continue;
 
     const dx = u - primaryShape.centerX;
     const dy = v - primaryShape.centerY;
@@ -472,18 +496,18 @@ function sampleForeground(zones, isMobile) {
     let u = 0;
     let v = 0;
 
-    if (region < 0.48) {
-      u = randomBetween(0.56, 1.18);
-      v = randomBetween(-0.18, 0.56);
-    } else if (region < 0.74) {
-      u = randomBetween(-0.16, 0.24);
-      v = randomBetween(0.56, 1.08);
+    if (region < 0.68) {
+      u = randomBetween(0.66, 1.14);
+      v = randomBetween(-0.12, 0.42);
+    } else if (region < 0.92) {
+      u = randomBetween(0.72, 1.08);
+      v = randomBetween(0.38, 0.82);
     } else {
-      u = randomBetween(0.14, 0.94);
-      v = randomBetween(0.68, 1.14);
+      u = randomBetween(0.14, 0.3);
+      v = randomBetween(0.7, 0.98);
     }
 
-    if (!pointInExtendedFrame(u, v) || zonePenalty(u, v, zones) > 0.44) continue;
+    if (!pointInExtendedFrame(u, v) || zonePenalty(u, v, zones) > 0.26) continue;
 
     const directionX = Math.random() < 0.5 ? -1 : 1;
     const directionY = Math.random() < 0.5 ? -1 : 1;
@@ -514,15 +538,15 @@ function buildScatterTarget(anchor, heroShape, scatterDistance, layerFamily) {
   const tangentX = -radialY;
   const tangentY = radialX;
   const distanceMultiplier = layerFamily === "foreground"
-    ? randomBetween(1.6, 2.4)
+    ? randomBetween(1.2, 1.8)
     : layerFamily === "ambient"
-      ? randomBetween(1.1, 1.8)
-      : randomBetween(1.3, 2.05);
+      ? randomBetween(0.9, 1.4)
+      : randomBetween(1.05, 1.6);
   const radialDistance = heroShape.radiusX * scatterDistance * distanceMultiplier;
-  const tangentialDistance = heroShape.radiusY * randomBetween(-1.28, 1.28);
+  const tangentialDistance = heroShape.radiusY * randomBetween(-0.94, 0.94);
   const zDistance = layerFamily === "foreground"
-    ? randomBetween(10, 18)
-    : randomBetween(-9, 14);
+    ? randomBetween(7, 12)
+    : randomBetween(-7, 10);
 
   return {
     u: anchor.u + radialX * radialDistance + tangentX * tangentialDistance,
@@ -558,10 +582,10 @@ function buildSampleStyle(formations, scatter, layerFamily, palette, colorIntens
   const paletteIndex = pickPaletteIndex(palette, colorProfile);
   const alphaRange = palette[paletteIndex].alpha;
   const scale = layerFamily === "foreground"
-    ? randomBetween(0.055, 0.11)
+    ? randomBetween(0.034, 0.062)
     : layerFamily === "ambient"
-      ? randomBetween(0.018, 0.05)
-      : randomBetween(0.026, 0.076);
+      ? randomBetween(0.014, 0.03)
+      : randomBetween(0.022, 0.048);
   const alpha = randomBetween(alphaRange[0], alphaRange[1]) * colorIntensity;
 
   return {
@@ -572,12 +596,12 @@ function buildSampleStyle(formations, scatter, layerFamily, palette, colorIntens
     scale: scale,
     alpha: alpha,
     phase: Math.random() * Math.PI * 2,
-    spin: layerFamily === "foreground" ? randomBetween(0.16, 0.38) : randomBetween(0.07, 0.22),
-    shear: randomBetween(0.84, 1.26),
-    flow: layerFamily === "main" ? randomBetween(0.14, 0.32) : randomBetween(0.08, 0.24),
-    noise: layerFamily === "foreground" ? randomBetween(0.08, 0.18) : randomBetween(0.03, 0.11),
-    returnStrength: layerFamily === "foreground" ? randomBetween(4.6, 6.8) : randomBetween(3.5, 5.6),
-    interactionWeight: layerFamily === "ambient" ? randomBetween(0.42, 0.72) : randomBetween(0.78, 1.2),
+    spin: layerFamily === "foreground" ? randomBetween(0.04, 0.12) : randomBetween(0.02, 0.08),
+    shear: randomBetween(0.92, 1.12),
+    flow: layerFamily === "main" ? randomBetween(0.08, 0.18) : randomBetween(0.04, 0.12),
+    noise: layerFamily === "foreground" ? randomBetween(0.04, 0.1) : randomBetween(0.02, 0.06),
+    returnStrength: layerFamily === "foreground" ? randomBetween(2.1, 3.1) : randomBetween(1.7, 2.6),
+    interactionWeight: layerFamily === "ambient" ? randomBetween(0.12, 0.2) : randomBetween(0.18, 0.3),
     depthFactor: formations.hero.depthFactor,
     orderWeight: (formations.browse.orderWeight + formations.directory.orderWeight + formations.insights.orderWeight) / 3,
     rogueWeight: Math.max(formations.hero.rogueWeight, formations.directory.rogueWeight),
@@ -593,16 +617,16 @@ function buildFormationSet(heroShape, shieldShape, waveShape, globeShape, footer
       ? sampleForeground(zones, isMobile) || sampleHeroObject(heroShape, zones, layerFamily, shapeMode)
       : sampleHeroObject(heroShape, zones, layerFamily, shapeMode);
   const browse = layerFamily === "ambient"
-    ? sampleShieldObject(shieldShape, "main") || sampleAmbient(shieldShape, [], isMobile)
+    ? sampleShieldObject(shieldShape, "main") || sampleAmbient(shieldShape, zones, isMobile)
     : sampleShieldObject(shieldShape, layerFamily);
   const directory = layerFamily === "ambient"
-    ? sampleWaveField(waveShape, isMobile, "main") || sampleAmbient(waveShape, [], isMobile)
+    ? sampleWaveField(waveShape, isMobile, "main") || sampleAmbient(waveShape, zones, isMobile)
     : sampleWaveField(waveShape, isMobile, layerFamily);
   const insights = layerFamily === "ambient"
-    ? sampleGlobe(globeShape, "main") || sampleAmbient(globeShape, [], isMobile)
+    ? sampleGlobe(globeShape, "main") || sampleAmbient(globeShape, zones, isMobile)
     : sampleGlobe(globeShape, layerFamily);
   const footer = layerFamily === "ambient"
-    ? sampleFooterHalo(footerShape, "main") || sampleAmbient(footerShape, [], isMobile)
+    ? sampleFooterHalo(footerShape, "main") || sampleAmbient(footerShape, zones, isMobile)
     : sampleFooterHalo(footerShape, layerFamily);
 
   if (!hero || !browse || !directory || !insights || !footer) {
