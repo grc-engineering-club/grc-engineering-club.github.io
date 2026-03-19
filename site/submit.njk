@@ -10,11 +10,11 @@ permalink: /submit/index.html
     <p class="submit-tagline">Fill out your profile below. When you're ready, we'll open GitHub so you can submit it — a PR will be created for you automatically.</p>
   </div>
 
-  <div class="step-indicator">
-    <button class="step active" data-step="1"><span class="step-num">1</span> Identity</button>
-    <button class="step" data-step="2"><span class="step-num">2</span> Professional</button>
-    <button class="step" data-step="3"><span class="step-num">3</span> Projects & Bio</button>
-    <button class="step" data-step="4"><span class="step-num">4</span> Preview</button>
+  <div class="step-indicator" role="tablist" aria-label="Form steps">
+    <button class="step active" data-step="1" role="tab" aria-current="step" aria-selected="true"><span class="step-num">1</span> Identity</button>
+    <button class="step" data-step="2" role="tab" aria-disabled="true"><span class="step-num">2</span> Professional</button>
+    <button class="step" data-step="3" role="tab" aria-disabled="true"><span class="step-num">3</span> Projects & Bio</button>
+    <button class="step" data-step="4" role="tab" aria-disabled="true"><span class="step-num">4</span> Preview</button>
   </div>
 
   <form id="submit-form" class="submit-form" novalidate>
@@ -27,16 +27,16 @@ permalink: /submit/index.html
         <label class="form-label" for="field-github">GitHub Username *</label>
         <div class="form-hint">Your profile avatar will be pulled from GitHub automatically.</div>
         <div class="github-input-row">
-          <input type="text" id="field-github" name="github" required placeholder="octocat" autocomplete="off" pattern="[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?" maxlength="39">
+          <input type="text" id="field-github" name="github" required placeholder="octocat" autocomplete="off" pattern="[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?" maxlength="39" aria-describedby="error-github">
           <img id="github-avatar-preview" class="avatar-preview" src="" alt="" hidden>
         </div>
-        <div class="form-error" id="error-github"></div>
+        <div class="form-error" id="error-github" role="alert"></div>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="field-name">Full Name *</label>
-        <input type="text" id="field-name" name="name" required placeholder="Jane Smith">
-        <div class="form-error" id="error-name"></div>
+        <input type="text" id="field-name" name="name" required placeholder="Jane Smith" aria-describedby="error-name">
+        <div class="form-error" id="error-name" role="alert"></div>
       </div>
 
       <div class="form-group">
@@ -63,7 +63,7 @@ permalink: /submit/index.html
           <input type="text" id="custom-specialization" placeholder="Other specialization…">
           <button type="button" id="add-custom-specialization" class="btn btn-outline btn-sm">Add</button>
         </div>
-        <div class="form-error" id="error-specializations"></div>
+        <div class="form-error" id="error-specializations" role="alert"></div>
       </div>
 
       <div class="form-nav">
@@ -95,8 +95,8 @@ permalink: /submit/index.html
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="field-linkedin">LinkedIn</label>
-          <input type="url" id="field-linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
-          <div class="form-error" id="error-linkedin"></div>
+          <input type="url" id="field-linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" aria-describedby="error-linkedin">
+          <div class="form-error" id="error-linkedin" role="alert"></div>
         </div>
         <div class="form-group">
           <label class="form-label" for="field-twitter">Twitter / X</label>
@@ -117,8 +117,8 @@ permalink: /submit/index.html
 
       <div class="form-group">
         <label class="form-label" for="field-blog">Blog / Website</label>
-        <input type="url" id="field-blog" name="blog" placeholder="https://your-website.com">
-        <div class="form-error" id="error-blog"></div>
+        <input type="url" id="field-blog" name="blog" placeholder="https://your-website.com" aria-describedby="error-blog">
+        <div class="form-error" id="error-blog" role="alert"></div>
       </div>
 
       <div class="form-group">
@@ -209,7 +209,7 @@ permalink: /submit/index.html
         <label class="form-label">Notable Projects <span class="form-hint-inline">up to 5</span></label>
         <div id="projects-list"></div>
         <button type="button" id="add-project" class="btn btn-outline btn-sm">+ Add Project</button>
-        <div class="form-error" id="error-projects"></div>
+        <div class="form-error" id="error-projects" role="alert"></div>
       </div>
 
       <div class="form-group">

@@ -7,30 +7,33 @@
   <meta name="description" content="{{ description or 'Find GRC engineers to hire — browse by specialization, framework expertise, and availability.' }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/site/assets/css/style.css">
   <script>
     (function() {
-      var saved = localStorage.getItem('theme');
-      if (saved) {
-        document.documentElement.setAttribute('data-theme', saved);
-      }
+      document.documentElement.setAttribute('data-theme', 'dark');
+      window.getEffectiveTheme = function() {
+        return 'dark';
+      };
+      try {
+        localStorage.removeItem('theme');
+      } catch (e) {}
     })();
   </script>
 </head>
-<body>
+<body class="{{ bodyClass or '' }}">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="nav">
     <div class="nav-inner">
       <a href="/" class="nav-brand">GRC Engineer Directory</a>
       <div class="nav-links">
-        <a href="https://grcengclub.com" class="nav-link" target="_blank" rel="noopener">grcengclub.com</a>
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode"></button>
+        <a href="https://grcengclub.com" class="nav-link" target="_blank" rel="noopener" aria-label="GRC Engineering Club"><span class="nav-link-text">grcengclub.com</span><svg class="nav-link-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
         <a href="/submit/" class="btn btn-primary">Submit Profile</a>
       </div>
     </div>
   </nav>
 
-  <main>
+  <main id="main-content">
     {{ content | safe }}
   </main>
 
@@ -40,27 +43,5 @@
       <p><a href="/submit/">Submit your profile</a> to join the directory.</p>
     </div>
   </footer>
-
-  <script>
-    (function() {
-      var btn = document.getElementById('theme-toggle');
-      window.getEffectiveTheme = function() {
-        var saved = document.documentElement.getAttribute('data-theme');
-        if (saved) return saved;
-        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      };
-      function updateIcon() {
-        btn.textContent = getEffectiveTheme() === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
-      }
-      btn.addEventListener('click', function() {
-        var current = getEffectiveTheme();
-        var next = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('theme', next);
-        updateIcon();
-      });
-      updateIcon();
-    })();
-  </script>
 </body>
 </html>

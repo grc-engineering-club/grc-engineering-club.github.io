@@ -39,6 +39,21 @@
       var s = +el.dataset.step;
       el.classList.toggle('active', s === n);
       el.classList.toggle('completed', s < n);
+      // Accessibility: mark current step, disable unreachable steps
+      if (s === n) {
+        el.setAttribute('aria-current', 'step');
+        el.setAttribute('aria-selected', 'true');
+        el.removeAttribute('aria-disabled');
+      } else {
+        el.removeAttribute('aria-current');
+        el.setAttribute('aria-selected', 'false');
+        // Allow going back to completed steps or one step forward
+        if (s < n || s === n + 1) {
+          el.removeAttribute('aria-disabled');
+        } else {
+          el.setAttribute('aria-disabled', 'true');
+        }
+      }
     });
     currentStep = n;
     if (n === 4) renderPreview();
@@ -229,9 +244,12 @@
   function setError(field, msg) {
     var el = $('#error-' + field);
     if (el) el.textContent = msg;
+    var input = $('#field-' + field);
+    if (input) input.setAttribute('aria-invalid', 'true');
   }
   function clearErrors() {
     $$('.form-error').forEach(function (el) { el.textContent = ''; });
+    $$('[aria-invalid]').forEach(function (el) { el.removeAttribute('aria-invalid'); });
   }
 
   function validateStep(step) {

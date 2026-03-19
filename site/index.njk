@@ -2,32 +2,146 @@
 layout: layouts/home.njk
 title: GRC Engineer Directory — Find a GRC Engineer to Hire
 permalink: /index.html
+bodyClass: page-home
 ---
-<section class="hero" id="hero">
-  <div id="tsparticles" class="hero-particles"></div>
-  <div class="hero-content">
-    <h1>Find a GRC Engineer</h1>
-    <p class="hero-tagline">Browse GRC professionals by specialization, framework expertise, and availability.</p>
-    <p class="hero-sub">Professionals with real-world GRC engineering experience.</p>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <span class="hero-stat-num" data-target="{{ collections.engineers.length }}">0</span> Engineers
+<div class="page-visual page-visual-home" aria-hidden="true">
+  <div class="page-visual-stage">
+    <canvas id="hero-canvas" class="hero-canvas"></canvas>
+    <div class="hero-atmosphere">
+      <span class="hero-orb hero-orb-one"></span>
+      <span class="hero-orb hero-orb-two"></span>
+    </div>
+    <div class="hero-visual-vignette"></div>
+    <aside class="story-progress" aria-hidden="true" hidden>
+      <p class="story-progress-label">Signal path</p>
+      <div class="story-progress-track">
+        <span class="story-progress-fill"></span>
       </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('frameworks') | length }}">0</span> Frameworks
+      <ol class="story-progress-steps">
+        <li class="story-progress-step" data-story-step="hero">
+          <span class="story-progress-dot"></span>
+          <span class="story-progress-text">Assemble</span>
+        </li>
+        <li class="story-progress-step" data-story-step="browse">
+          <span class="story-progress-dot"></span>
+          <span class="story-progress-text">Collapse</span>
+        </li>
+        <li class="story-progress-step" data-story-step="directory">
+          <span class="story-progress-dot"></span>
+          <span class="story-progress-text">Compare</span>
+        </li>
+        <li class="story-progress-step" data-story-step="insights">
+          <span class="story-progress-dot"></span>
+          <span class="story-progress-text">See coverage</span>
+        </li>
+        <li class="story-progress-step" data-story-step="footer">
+          <span class="story-progress-dot"></span>
+          <span class="story-progress-text">Resolve</span>
+        </li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<section class="hero landing-hero" id="hero" data-story-section="hero">
+  <div class="hero-shell">
+    <div class="hero-copy" data-reveal="rise">
+      <p class="section-kicker">Curated GRC talent directory</p>
+      <h1>Find GRC engineers who can turn control work into operating systems.</h1>
+      <p class="hero-tagline">Explore practitioners across audit readiness, cloud security, evidence automation, vendor risk, and implementation-minded compliance work without leaving the page.</p>
+      <div class="hero-actions">
+        <a href="#browse-directory" class="btn btn-primary btn-hero">Browse engineers</a>
+        <a href="/submit/" class="btn btn-outline btn-hero-alt">Join the directory</a>
       </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('certifications') | length }}">0</span> Certifications
+      <div class="hero-stats">
+        <article class="hero-stat-card">
+          <p class="hero-stat-label">Engineers</p>
+          <span class="hero-stat-num" data-target="{{ collections.engineers.length }}">0</span>
+          <p class="hero-stat-copy">Profiles from hands-on operators and builders.</p>
+        </article>
+        <article class="hero-stat-card">
+          <p class="hero-stat-label">Frameworks</p>
+          <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('frameworks') | length }}">0</span>
+          <p class="hero-stat-copy">Coverage across modern assurance and regulatory work.</p>
+        </article>
+        <article class="hero-stat-card">
+          <p class="hero-stat-label">Certifications</p>
+          <span class="hero-stat-num" data-target="{{ collections.engineers | uniqueValues('certifications') | length }}">0</span>
+          <p class="hero-stat-copy">Signal for buyers who need depth, not generic resumes.</p>
+        </article>
       </div>
+    </div>
+
+    <aside class="hero-panel" data-reveal="right">
+      <p class="hero-panel-kicker">Balanced for signal</p>
+      <h2>Search by framework, specialization, certifications, tools, and availability from a single surface.</h2>
+      <p class="hero-panel-copy">This landing page keeps the premium visual treatment up front, but the directory remains one jump away and the filters stay fast, keyboard-friendly, and shareable.</p>
+      <div class="hero-panel-grid">
+        <div class="hero-panel-item">
+          <span class="hero-panel-label">Availability modes</span>
+          <strong>{{ collections.engineers | uniqueValues('available_for') | length }}</strong>
+        </div>
+        <div class="hero-panel-item">
+          <span class="hero-panel-label">Languages & tools</span>
+          <strong>{{ collections.engineers | uniqueValues('languages') | length }}</strong>
+        </div>
+        <div class="hero-panel-item">
+          <span class="hero-panel-label">Search shortcut</span>
+          <strong>/</strong>
+        </div>
+        <div class="hero-panel-item">
+          <span class="hero-panel-label">Primary flow</span>
+          <strong>Browse, filter, shortlist</strong>
+        </div>
+      </div>
+      <a href="#browse-directory" class="hero-panel-link">Jump into the filter surface</a>
+    </aside>
+  </div>
+
+  <div class="hero-signal-strip" data-reveal-stagger>
+    <article class="signal-card" data-reveal="rise">
+      <p class="signal-label">Who it serves</p>
+      <h2>Hiring teams who need operators, not only policy writers.</h2>
+      <p>Use the directory to quickly spot engineers comfortable with evidence, systems, tooling, and implementation detail.</p>
+    </article>
+    <article class="signal-card" data-reveal="rise">
+      <p class="signal-label">How to use it</p>
+      <h2>Start broad, then collapse the field fast.</h2>
+      <p>Search by role or problem, stack framework filters, and narrow by certifications, tools, and delivery mode.</p>
+    </article>
+    <article class="signal-card" data-reveal="rise">
+      <p class="signal-label">Why it feels different</p>
+      <h2>More signal density, less directory sludge.</h2>
+      <p>The landing experience is brand-led, but the product still moves directly into candidate discovery and comparison.</p>
+    </article>
+  </div>
+</section>
+
+<section class="browse-section" id="browse-directory" aria-labelledby="browse-title" data-story-section="browse">
+  <div class="browse-shell">
+    <div class="browse-header" data-reveal="left">
+      <div>
+        <p class="section-kicker">Browse the directory</p>
+        <h2 id="browse-title">Move from atmosphere to signal without losing context.</h2>
+      </div>
+      <p class="browse-copy">Press <kbd>/</kbd> to jump straight to search, or start with the filter groups below to narrow the field in-place.</p>
+    </div>
+
+    <div class="browse-surface" data-reveal="right">
+      {% include "partials/filter-bar.njk" %}
     </div>
   </div>
 </section>
 
-{% include "partials/filter-bar.njk" %}
-
-<section class="directory">
-  <p class="results-count"><span id="results-count">{{ collections.engineers.length }}</span> engineers</p>
-  <div class="card-grid">
+<section class="directory landing-directory" aria-labelledby="directory-title" data-story-section="directory">
+  <div class="directory-header" data-reveal="left">
+    <div>
+      <p class="section-kicker">Directory results</p>
+      <h2 id="directory-title">Current matching engineers</h2>
+    </div>
+    <p class="results-count"><span id="results-count">{{ collections.engineers.length }}</span> engineers</p>
+  </div>
+  <div class="card-grid" data-reveal-stagger>
     {% for engineer in collections.engineers %}
       {% include "partials/engineer-card.njk" %}
     {% endfor %}
@@ -35,22 +149,28 @@ permalink: /index.html
   <p id="no-results" class="no-results" style="display:none">No engineers match your filters.</p>
 </section>
 
-<section class="insights">
-  <h2>Community Insights</h2>
-  <div class="insights-grid">
-    <div class="insight-card">
+<section class="insights landing-insights" id="community-insights" aria-labelledby="insights-title" data-story-section="insights">
+  <div class="insights-header" data-reveal="left">
+    <div>
+      <p class="section-kicker">Community pulse</p>
+      <h2 id="insights-title">See how the directory is distributed right now.</h2>
+    </div>
+    <p class="insights-copy">The charts below keep the page useful after the first impression by showing where coverage is already strong and where niche experience concentrates.</p>
+  </div>
+  <div class="insights-grid" data-reveal-stagger>
+    <div class="insight-card" data-reveal="rise">
       <h3>Top Specializations</h3>
       <canvas id="chart-specs"></canvas>
     </div>
-    <div class="insight-card">
+    <div class="insight-card" data-reveal="rise">
       <h3>Framework Coverage</h3>
       <canvas id="chart-frameworks"></canvas>
     </div>
-    <div class="insight-card">
+    <div class="insight-card" data-reveal="rise">
       <h3>Availability</h3>
       <canvas id="chart-available"></canvas>
     </div>
-    <div class="insight-card">
+    <div class="insight-card" data-reveal="rise">
       <h3>Languages & Tools</h3>
       <canvas id="chart-languages"></canvas>
     </div>
@@ -66,7 +186,7 @@ permalink: /index.html
 }
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-<script src="/site/assets/js/search.js"></script>
+<script defer src="/site/assets/js/search.js"></script>
 <script defer src="/site/assets/js/effects.js"></script>
+<script type="module" src="/site/assets/js/home.js"></script>

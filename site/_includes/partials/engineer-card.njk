@@ -1,6 +1,7 @@
 <article
   class="card"
   style="--i:{{ loop.index0 }}"
+  data-reveal="rise"
   data-specializations="{{ (engineer.data.specializations or []) | join(',') | lower }}"
   data-frameworks="{{ (engineer.data.frameworks or []) | join(',') | lower }}"
   data-certifications="{{ (engineer.data.certifications or []) | join(',') | lower }}"
@@ -18,7 +19,7 @@
       loading="lazy"
     >
     <div>
-      <a href="/engineers/{{ engineer.data.github }}/" class="card-name">{{ engineer.data.name }}</a>
+      <h3 class="card-name-heading"><a href="/engineers/{{ engineer.data.github }}/" class="card-name">{{ engineer.data.name }}</a></h3>
       {% if engineer.data.title %}<p class="card-title">{{ engineer.data.title }}</p>{% endif %}
       {% if engineer.data.company %}<p class="card-company">{{ engineer.data.company }}</p>{% endif %}
     </div>
@@ -59,7 +60,7 @@
       {% set val = engineer.data[social.key] %}
       {% if val or social.alwaysShow %}
         {% set href = social | socialUrl(val or engineer.data.github) %}
-        <a href="{{ href }}" target="_blank" rel="noopener" title="{{ social.label }}">
+        <a href="{{ href }}" target="_blank" rel="noopener" aria-label="{{ social.label }}" title="{{ social.label }}">
           {{ social.icon | safe }}
         </a>
       {% endif %}

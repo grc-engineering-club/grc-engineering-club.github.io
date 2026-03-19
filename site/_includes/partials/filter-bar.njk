@@ -1,6 +1,10 @@
 <div class="filters">
   <div class="search-box">
-    <input type="text" id="search-input" placeholder="Search by name, skill, framework..." aria-label="Search engineers">
+    <label class="search-label" for="search-input">Start with a name, framework, specialization, or tool</label>
+    <div class="search-input-shell">
+      <input type="text" id="search-input" placeholder="Search by name, framework, specialization..." aria-label="Search engineers">
+      <span class="search-shortcut" aria-hidden="true">/</span>
+    </div>
   </div>
 
   <div id="active-filters-summary" class="active-filters-summary" style="display:none">
@@ -16,7 +20,7 @@
         <span>Specializations</span>
         <span class="count-badge" style="display:none">0</span>
       </button>
-      <div class="filter-chips" data-filter="specializations">
+      <div class="filter-chips" data-filter="specializations" role="group" aria-label="Specialization filters">
         {% set allSpecs = collections.engineers | uniqueValues("specializations") %}
         {% for spec in allSpecs %}
         <button class="chip" data-value="{{ spec | lower }}" aria-pressed="false">{{ spec }}</button>
@@ -30,7 +34,7 @@
         <span>Frameworks</span>
         <span class="count-badge" style="display:none">0</span>
       </button>
-      <div class="filter-chips" data-filter="frameworks">
+      <div class="filter-chips" data-filter="frameworks" role="group" aria-label="Framework filters">
         {% set allFrameworks = collections.engineers | uniqueValues("frameworks") %}
         {% for fw in allFrameworks %}
         <button class="chip" data-value="{{ fw | lower }}" aria-pressed="false">{{ fw }}</button>
@@ -44,7 +48,7 @@
         <span>Certifications</span>
         <span class="count-badge" style="display:none">0</span>
       </button>
-      <div class="filter-chips" data-filter="certifications">
+      <div class="filter-chips" data-filter="certifications" role="group" aria-label="Certification filters">
         {% set allCerts = collections.engineers | uniqueValues("certifications") %}
         {% for cert in allCerts %}
         <button class="chip" data-value="{{ cert | lower }}" aria-pressed="false">{{ cert }}</button>
@@ -58,7 +62,7 @@
         <span>Languages & Tools</span>
         <span class="count-badge" style="display:none">0</span>
       </button>
-      <div class="filter-chips" data-filter="languages">
+      <div class="filter-chips" data-filter="languages" role="group" aria-label="Language and tool filters">
         {% set allLanguages = collections.engineers | uniqueValues("languages") %}
         {% for lang in allLanguages %}
         <button class="chip" data-value="{{ lang | lower }}" aria-pressed="false">{{ lang }}</button>
@@ -72,7 +76,7 @@
         <span>Available For</span>
         <span class="count-badge" style="display:none">0</span>
       </button>
-      <div class="filter-chips" data-filter="available">
+      <div class="filter-chips" data-filter="available" role="group" aria-label="Availability filters">
         {% set allAvailable = collections.engineers | uniqueValues("available_for") %}
         {% for a in allAvailable %}
         <button class="chip" data-value="{{ a | lower }}" aria-pressed="false">{{ a }}</button>
