@@ -30,8 +30,10 @@ certifications:
   - Linux LPI Essentials
 
 available_for:
-  - open-source
   - collaboration
+  - freelance
+  - hiring
+  - open-source
 
 projects:
   - name: CJIS v6.0 to FedRAMP High Gap Analysis
