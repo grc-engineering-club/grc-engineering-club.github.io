@@ -65,9 +65,15 @@ layout: layouts/base.njk
   </div>
   {% endif %}
 
-  <div class="profile-sections">
+  {% if content | trim %}
+  <div class="profile-body">
+    {{ content | safe }}
+  </div>
+  {% endif %}
+
+  <div class="profile-expertise">
     {% if specializations and specializations.length %}
-    <div class="profile-section">
+    <div class="profile-expertise-group">
       <h2>Specializations</h2>
       <div class="tags">
         {% for s in specializations %}<span class="tag tag-accent">{{ s }}</span>{% endfor %}
@@ -76,7 +82,7 @@ layout: layouts/base.njk
     {% endif %}
 
     {% if languages and languages.length %}
-    <div class="profile-section">
+    <div class="profile-expertise-group">
       <h2>Languages & Tools</h2>
       <div class="tags">
         {% for l in languages %}<span class="tag tag-language">{{ l }}</span>{% endfor %}
@@ -85,7 +91,7 @@ layout: layouts/base.njk
     {% endif %}
 
     {% if frameworks and frameworks.length %}
-    <div class="profile-section">
+    <div class="profile-expertise-group">
       <h2>Frameworks</h2>
       <div class="tags">
         {% for f in frameworks %}<span class="tag tag-outline">{{ f }}</span>{% endfor %}
@@ -94,37 +100,28 @@ layout: layouts/base.njk
     {% endif %}
 
     {% if certifications and certifications.length %}
-    <div class="profile-section">
+    <div class="profile-expertise-group">
       <h2>Certifications</h2>
       <div class="tags">
         {% for c in certifications %}<span class="tag tag-cert">{{ c }}</span>{% endfor %}
       </div>
     </div>
     {% endif %}
-
   </div>
 
-  <div class="profile-lower">
-    {% if projects and projects.length %}
-    <div class="profile-section profile-projects">
-      <h2>Projects</h2>
-      <div class="project-list">
-        {% for p in projects %}
-        <div class="project-card">
-          <a href="{{ p.url }}" target="_blank" rel="noopener" class="project-name" aria-label="{{ p.name }} (opens in new tab)">{{ p.name }} <span class="external-icon" aria-hidden="true">↗</span></a>
-          {% if p.description %}<p class="project-desc">{{ p.description }}</p>{% endif %}
-        </div>
-        {% endfor %}
+  {% if projects and projects.length %}
+  <div class="profile-projects">
+    <h2>Projects</h2>
+    <div class="project-list">
+      {% for p in projects %}
+      <div class="project-card">
+        <a href="{{ p.url }}" target="_blank" rel="noopener" class="project-name" aria-label="{{ p.name }} (opens in new tab)">{{ p.name }} <span class="external-icon" aria-hidden="true">↗</span></a>
+        {% if p.description %}<p class="project-desc">{{ p.description }}</p>{% endif %}
       </div>
+      {% endfor %}
     </div>
-    {% endif %}
-
-    {% if content | trim %}
-    <div class="profile-body">
-      {{ content | safe }}
-    </div>
-    {% endif %}
   </div>
+  {% endif %}
 
   <div class="profile-cta">
     <p>Interested in working with {{ name }}?</p>
