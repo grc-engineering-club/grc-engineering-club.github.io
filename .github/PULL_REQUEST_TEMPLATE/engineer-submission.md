@@ -4,7 +4,7 @@
 
 - **Name:** Akeem Williams <!-- Your full name -->
 - **GitHub:** ajwill85 <!-- Your GitHub username -->
-- **Specializations:** GRC Engineering, Compliance Automation, Cloud Security, Risk Management, Audit & Assurance, Third-Party Risk, Privacy <!-- e.g., Cloud Security, Compliance Automation -->
+- **Specializations:** GRC Engineering, AI Governance, Compliance Automation, Cloud Security, Risk Management, Audit & Assurance, Third-Party Risk, Privacy <!-- e.g., Cloud Security, Compliance Automation -->
 
 ### Contributor Checklist
 
