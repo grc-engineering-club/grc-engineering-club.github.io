@@ -65,7 +65,7 @@
   /* ── Charts ── */
   var chartInstances = [];
 
-  var PALETTE = [
+  var PALETTE_DARK = [
     "#e8650a",   // orange (brand primary)
     "#f59e0b",   // amber
     "#d4a017",   // gold (certs)
@@ -75,6 +75,21 @@
     "#f97316",   // light orange
     "#dc2626"    // red accent
   ];
+
+  var PALETTE_LIGHT = [
+    "#bf4a00",   // orange (brand primary, accessible)
+    "#d97706",   // amber (darkened)
+    "#b8860b",   // gold (certs)
+    "#9a3412",   // dark orange
+    "#c2410c",   // orange-red
+    "#92400e",   // brown-orange
+    "#ea580c",   // light orange
+    "#b91c1c"    // red accent
+  ];
+
+  function chartPalette() {
+    return isDark() ? PALETTE_DARK : PALETTE_LIGHT;
+  }
 
   function chartTextColor() {
     return getComputedStyle(document.documentElement).getPropertyValue("--text-secondary").trim() || (isDark() ? "#a0a0a0" : "#555555");
@@ -113,7 +128,7 @@
         labels: specLabels,
         datasets: [{
           data: specValues,
-          backgroundColor: PALETTE.slice(0, specLabels.length),
+          backgroundColor: chartPalette().slice(0, specLabels.length),
           borderWidth: 0,
         }],
       },
@@ -139,7 +154,7 @@
         labels: fwLabels,
         datasets: [{
           data: fwValues,
-          backgroundColor: PALETTE.slice(0, fwLabels.length),
+          backgroundColor: chartPalette().slice(0, fwLabels.length),
           borderWidth: 0,
         }],
       },
@@ -163,7 +178,7 @@
           labels: langLabels,
           datasets: [{
             data: langValues,
-            backgroundColor: PALETTE.slice(0, langLabels.length),
+            backgroundColor: chartPalette().slice(0, langLabels.length),
             borderWidth: 0,
           }],
         },
@@ -190,7 +205,7 @@
         labels: availLabels,
         datasets: [{
           data: availValues,
-          backgroundColor: PALETTE.slice(0, availLabels.length).map(function (c) { return c + "cc"; }),
+          backgroundColor: chartPalette().slice(0, availLabels.length).map(function (c) { return c + "cc"; }),
           borderWidth: 0,
         }],
       },
@@ -209,6 +224,7 @@
 
   function updateChartColors() {
     var color = chartTextColor();
+    var palette = chartPalette();
     chartInstances.forEach(function (c) {
       c.options.color = color;
       if (c.options.plugins && c.options.plugins.legend && c.options.plugins.legend.labels) {
@@ -224,6 +240,15 @@
           c.options.scales.r.grid.color = isDark() ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
         }
       }
+      /* Update segment colors to match theme */
+      c.data.datasets.forEach(function (ds) {
+        if (Array.isArray(ds.backgroundColor)) {
+          var isPolar = c.config.type === "polarArea";
+          ds.backgroundColor = palette.slice(0, ds.data.length).map(function (clr) {
+            return isPolar ? clr + "cc" : clr;
+          });
+        }
+      });
       c.update("none");
     });
   }
@@ -244,10 +269,27 @@
   });
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
+  /* ── Lazy-load charts when insights section enters viewport ── */
+  function observeCharts() {
+    var insightsSection = document.querySelector(".insights");
+    if (!insightsSection || typeof IntersectionObserver === "undefined") {
+      /* Fallback: init immediately if no IO support */
+      initCharts();
+      return;
+    }
+    var chartObserver = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) {
+        chartObserver.disconnect();
+        initCharts();
+      }
+    }, { rootMargin: "200px" });
+    chartObserver.observe(insightsSection);
+  }
+
   /* ── Init ── */
   function init() {
     initParticles();
-    initCharts();
+    observeCharts();
   }
 
   if (document.readyState === "loading") {

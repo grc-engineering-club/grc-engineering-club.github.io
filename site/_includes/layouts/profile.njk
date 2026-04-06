@@ -147,15 +147,23 @@ layout: layouts/base.njk
   var btn = document.getElementById('share-btn');
   var status = document.getElementById('share-status');
   if (!btn) return;
+  function onCopied() {
+    btn.querySelector('span').textContent = 'Copied!';
+    status.textContent = 'Profile URL copied to clipboard';
+    setTimeout(function() {
+      btn.querySelector('span').textContent = 'Share this profile';
+      status.textContent = '';
+    }, 2000);
+  }
   btn.addEventListener('click', function() {
-    navigator.clipboard.writeText(window.location.href).then(function() {
-      btn.querySelector('span').textContent = 'Copied!';
-      status.textContent = 'Profile URL copied to clipboard';
-      setTimeout(function() {
-        btn.querySelector('span').textContent = 'Share this profile';
-        status.textContent = '';
-      }, 2000);
-    });
+    var url = window.location.href;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(onCopied).catch(function() {
+        window.prompt('Copy this URL:', url);
+      });
+    } else {
+      window.prompt('Copy this URL:', url);
+    }
   });
 })();
 </script>
