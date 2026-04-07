@@ -4,7 +4,9 @@ on:
     branches: [main]
     paths:
       - 'engineers/*.md'
+      - 'jobs/**'
       - 'site/**'
+      - 'scripts/**'
       - '.eleventy.js'
       - 'package.json'
       - 'package-lock.json'

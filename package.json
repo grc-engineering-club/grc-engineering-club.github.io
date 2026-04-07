@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "npx @11ty/eleventy",
-    "serve": "npx @11ty/eleventy --serve"
+    "serve": "npx @11ty/eleventy --serve",
+    "import:jobs": "node scripts/import-jobs.js"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0"

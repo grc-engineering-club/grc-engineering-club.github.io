@@ -1,13 +1,14 @@
 ---
 layout: layouts/base.njk
 title: Submit Your Profile — GRC Engineer Directory
+description: Submit your GRC Engineering Club engineer profile through GitHub for maintainer review.
 permalink: /submit/index.html
 ---
 
 <div class="submit-page">
   <div class="submit-header">
     <h1>Join the Directory</h1>
-    <p class="submit-tagline">Fill out your profile below. When you're ready, we'll open GitHub so you can submit it — a PR will be created for you automatically.</p>
+    <p class="submit-tagline">Fill out your profile below. When you're ready, we'll copy your profile payload and open a GitHub submission issue for you. After you submit the issue, maintainers review the generated pull request before your profile goes live.</p>
   </div>
 
   <div class="step-indicator">
@@ -23,20 +24,20 @@ permalink: /submit/index.html
     <div class="form-step" data-step="1">
       <h2 class="form-step-title">Identity <span class="form-required-note">* required</span></h2>
 
-      <div class="form-group">
-        <label class="form-label" for="field-github">GitHub Username *</label>
-        <div class="form-hint">Your profile avatar will be pulled from GitHub automatically.</div>
-        <div class="github-input-row">
-          <input type="text" id="field-github" name="github" required placeholder="octocat" autocomplete="off" pattern="[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?" maxlength="39">
-          <img id="github-avatar-preview" class="avatar-preview" src="" alt="" hidden>
+        <div class="form-group">
+          <label class="form-label" for="field-github">GitHub Username *</label>
+          <div class="form-hint">Your profile avatar will be pulled from GitHub automatically.</div>
+          <div class="github-input-row">
+            <input type="text" id="field-github" name="github" required placeholder="octocat" autocomplete="off" maxlength="39">
+            <img id="github-avatar-preview" class="avatar-preview" src="" alt="" hidden>
+          </div>
+          <div class="form-error" id="error-github" aria-live="polite" aria-atomic="true"></div>
         </div>
-        <div class="form-error" id="error-github"></div>
-      </div>
 
       <div class="form-group">
         <label class="form-label" for="field-name">Full Name *</label>
         <input type="text" id="field-name" name="name" required placeholder="Jane Smith">
-        <div class="form-error" id="error-name"></div>
+        <div class="form-error" id="error-name" aria-live="polite" aria-atomic="true"></div>
       </div>
 
       <div class="form-group">
@@ -63,7 +64,7 @@ permalink: /submit/index.html
           <input type="text" id="custom-specialization" placeholder="Other specialization…" aria-label="Add custom specialization">
           <button type="button" id="add-custom-specialization" class="btn btn-outline btn-sm">Add</button>
         </div>
-        <div class="form-error" id="error-specializations"></div>
+        <div class="form-error" id="error-specializations" aria-live="polite" aria-atomic="true"></div>
       </div>
 
       <div class="form-nav">
@@ -96,7 +97,7 @@ permalink: /submit/index.html
         <div class="form-group">
           <label class="form-label" for="field-linkedin">LinkedIn</label>
           <input type="url" id="field-linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
-          <div class="form-error" id="error-linkedin"></div>
+          <div class="form-error" id="error-linkedin" aria-live="polite" aria-atomic="true"></div>
         </div>
         <div class="form-group">
           <label class="form-label" for="field-twitter">Twitter / X</label>
@@ -118,7 +119,7 @@ permalink: /submit/index.html
       <div class="form-group">
         <label class="form-label" for="field-blog">Blog / Website</label>
         <input type="url" id="field-blog" name="blog" placeholder="https://your-website.com">
-        <div class="form-error" id="error-blog"></div>
+        <div class="form-error" id="error-blog" aria-live="polite" aria-atomic="true"></div>
       </div>
 
       <div class="form-group">
@@ -209,7 +210,7 @@ permalink: /submit/index.html
         <label class="form-label">Notable Projects <span class="form-hint-inline">up to 5</span></label>
         <div id="projects-list"></div>
         <button type="button" id="add-project" class="btn btn-outline btn-sm">+ Add Project</button>
-        <div class="form-error" id="error-projects"></div>
+        <div class="form-error" id="error-projects" aria-live="polite" aria-atomic="true"></div>
       </div>
 
       <div class="form-group">
@@ -239,16 +240,35 @@ permalink: /submit/index.html
     <!-- Step 4: Preview -->
     <div class="form-step" data-step="4" hidden>
       <h2 class="form-step-title">Preview Your Profile</h2>
-      <p class="form-hint" style="margin-bottom:1.5rem;">Review your profile below. Once you submit, a pull request is created for our team to review before it goes live.</p>
+      <p class="form-hint" style="margin-bottom:1.5rem;">Review your profile below. When you continue, we'll copy your profile payload and open a GitHub submission issue in a new tab. Paste the copied payload into the issue body, submit the issue, and our workflow will open the review pull request automatically.</p>
 
       <div id="profile-preview" class="profile-preview-container"></div>
 
       <div class="submit-actions">
         <button type="button" class="btn btn-outline" data-prev="1">← Edit</button>
-        <button type="button" id="btn-submit-github" class="btn btn-primary btn-lg">Submit to GitHub →</button>
+        <button type="button" id="btn-submit-github" class="btn btn-primary btn-lg">Copy Payload and Open GitHub Issue →</button>
       </div>
 
-      <p class="submit-hint">You'll be taken to GitHub to submit an issue. A pull request will be created automatically.</p>
+      <p class="submit-hint">Submission happens in GitHub. Paste the payload into the issue body, submit the issue, and maintainers will review the generated pull request.</p>
+
+      <div id="submit-fallback" class="submit-fallback" hidden tabindex="-1" aria-labelledby="submit-fallback-heading">
+        <h3 id="submit-fallback-heading">Finish in GitHub</h3>
+        <p id="submit-fallback-status" class="submit-fallback-status" aria-live="polite"></p>
+        <ol class="submit-fallback-steps">
+          <li>Use <strong>Copy profile payload</strong> if you need to copy it again.</li>
+          <li>Open the GitHub submission issue tab.</li>
+          <li>Paste the copied payload into the empty issue body, then click <strong>Submit new issue</strong>.</li>
+          <li>After the issue is submitted, maintainers will review the generated pull request.</li>
+        </ol>
+        <div class="submit-fallback-actions">
+          <button type="button" id="btn-copy-payload" class="btn btn-outline">Copy profile payload</button>
+          <a id="submit-issue-link" class="btn btn-primary" href="#" target="_blank" rel="noopener">Open GitHub submission issue</a>
+        </div>
+        <details class="submit-payload-wrap">
+          <summary>Show profile payload</summary>
+          <textarea id="submit-payload" rows="8" readonly spellcheck="false" aria-label="Profile payload"></textarea>
+        </details>
+      </div>
     </div>
 
   </form>

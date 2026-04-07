@@ -1,0 +1,132 @@
+---
+layout: layouts/base.njk
+---
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "JobPosting",
+  "title": {{ title | dump | safe }},
+  "description": {{ (summary or description or title) | dump | safe }},
+  "datePosted": {{ (posted_date or "") | dump | safe }},
+  "validThrough": {{ (expires_date or "") | dump | safe }},
+  "employmentType": {{ ((job_types and job_types[0]) or "") | dump | safe }},
+  "hiringOrganization": {
+    "@type": "Organization",
+    "name": {{ company | dump | safe }}
+  },
+  "jobLocation": {
+    "@type": "Place",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": {{ (location or "Remote") | dump | safe }}
+    }
+  },
+  "url": {{ ("https://directory.grcengclub.com" + page.url) | dump | safe }}
+}
+</script>
+{% set related = collections.engineers | relatedEngineers(specializations, frameworks, languages, 4) %}
+
+<div class="job-page">
+  <div class="profile-back">
+    <a href="/jobs/">&larr; Back to jobs</a>
+  </div>
+
+  <div class="job-page-grid">
+    <article class="job-main">
+      <div class="job-header">
+        <div class="job-card-eyebrow">
+          {% if sources and sources.length %}
+          <span class="job-source">{{ sources[0] }}</span>
+          {% endif %}
+          {% if posted_date %}
+          <span class="job-posted">Posted {{ posted_date | readableDate }}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="job-page-title">{{ title }}</h1>
+        <p class="job-page-company">{{ company }}{% if location %} <span aria-hidden="true">·</span> {{ location }}{% endif %}</p>
+
+        {% if summary %}
+        <p class="job-page-summary">{{ summary }}</p>
+        {% endif %}
+
+        <div class="job-page-tags">
+          {% for mode in work_modes %}<span class="tag tag-available">{{ mode }}</span>{% endfor %}
+          {% for type in job_types %}<span class="tag tag-outline">{{ type }}</span>{% endfor %}
+          {% if compensation %}<span class="tag tag-language">{{ compensation }}</span>{% endif %}
+        </div>
+      </div>
+
+      {% if specializations and specializations.length %}
+      <section class="job-section">
+        <h2>Specializations</h2>
+        <div class="tags">
+          {% for spec in specializations %}<span class="tag tag-accent">{{ spec }}</span>{% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if frameworks and frameworks.length %}
+      <section class="job-section">
+        <h2>Frameworks</h2>
+        <div class="tags">
+          {% for framework in frameworks %}<span class="tag tag-outline">{{ framework }}</span>{% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if languages and languages.length %}
+      <section class="job-section">
+        <h2>Languages & Tools</h2>
+        <div class="tags">
+          {% for language in languages %}<span class="tag tag-language">{{ language }}</span>{% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if content | trim %}
+      <section class="job-body">
+        {{ content | safe }}
+      </section>
+      {% endif %}
+
+      {% if related.length %}
+      <section class="job-section">
+        <h2>Engineers with overlapping skills</h2>
+        <div class="job-match-grid">
+          {% for engineer in related %}
+          <a href="{{ engineer.url }}" class="job-match-card">
+            <span class="job-match-name">{{ engineer.data.name }}</span>
+            {% if engineer.data.title %}<span class="job-match-role">{{ engineer.data.title }}</span>{% endif %}
+            {% if engineer.data.company %}<span class="job-match-role">{{ engineer.data.company }}</span>{% endif %}
+          </a>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+    </article>
+
+    <aside class="job-sidebar">
+      <div class="job-sidebar-card">
+        {% if apply_url %}
+        <a href="{{ apply_url }}" class="btn btn-primary job-apply-btn" target="_blank" rel="noopener">Apply for this role</a>
+        {% endif %}
+        {% if role_url and role_url != apply_url %}
+        <a href="{{ role_url }}" class="btn btn-outline job-apply-btn" target="_blank" rel="noopener">View original posting</a>
+        {% endif %}
+
+        <dl class="job-facts">
+          {% if company %}<div><dt>Company</dt><dd>{{ company }}</dd></div>{% endif %}
+          {% if location %}<div><dt>Location</dt><dd>{{ location }}</dd></div>{% endif %}
+          {% if posted_date %}<div><dt>Posted</dt><dd>{{ posted_date | readableDate }}</dd></div>{% endif %}
+          {% if expires_date %}<div><dt>Expires</dt><dd>{{ expires_date | readableDate }}</dd></div>{% endif %}
+          {% if sources and sources.length %}<div><dt>Source</dt><dd>{{ sources[0] }}</dd></div>{% endif %}
+        </dl>
+
+        {% if source_url %}
+        <p class="job-source-link"><a href="{{ source_url }}" target="_blank" rel="noopener">Source feed / board</a></p>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</div>

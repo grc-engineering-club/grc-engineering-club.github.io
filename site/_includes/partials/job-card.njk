@@ -1,0 +1,64 @@
+<article
+  class="card job-card"
+  style="--i:{{ loop.index0 }}"
+  data-title="{{ job.data.title | lower }}"
+  data-company="{{ job.data.company | lower }}"
+  data-location="{{ (job.data.location or '') | lower }}"
+  data-specializations="{{ (job.data.specializations or []) | join(',') | lower }}"
+  data-frameworks="{{ (job.data.frameworks or []) | join(',') | lower }}"
+  data-work-modes="{{ (job.data.work_modes or []) | join(',') | lower }}"
+  data-job-types="{{ (job.data.job_types or []) | join(',') | lower }}"
+  data-sources="{{ (job.data.sources or []) | join(',') | lower }}"
+>
+  <div class="job-card-top">
+    <div class="job-card-eyebrow">
+      {% if job.data.sources and job.data.sources.length %}
+      <span class="job-source">{{ job.data.sources[0] }}</span>
+      {% endif %}
+      {% if job.data.posted_date %}
+      <span class="job-posted">Posted {{ job.data.posted_date | readableDate }}</span>
+      {% endif %}
+    </div>
+
+    <a href="{{ job.url }}" class="card-name job-card-title">{{ job.data.title }}</a>
+    <p class="job-card-company">{{ job.data.company }}</p>
+
+    {% if job.data.summary %}
+    <p class="job-card-summary">{{ job.data.summary }}</p>
+    {% endif %}
+  </div>
+
+  <div class="job-card-meta">
+    {% if job.data.location %}<span>{{ job.data.location }}</span>{% endif %}
+    {% if job.data.work_modes and job.data.work_modes.length %}<span>{{ job.data.work_modes[0] }}</span>{% endif %}
+    {% if job.data.job_types and job.data.job_types.length %}<span>{{ job.data.job_types[0] }}</span>{% endif %}
+    {% if job.data.compensation %}<strong>{{ job.data.compensation }}</strong>{% endif %}
+  </div>
+
+  {% if job.data.specializations and job.data.specializations.length %}
+  <div class="card-tags">
+    {% for spec in job.data.specializations %}
+      {% if loop.index0 < 3 %}
+      <span class="tag tag-accent">{{ spec }}</span>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if job.data.frameworks and job.data.frameworks.length %}
+  <div class="card-tags">
+    {% for framework in job.data.frameworks %}
+      {% if loop.index0 < 2 %}
+      <span class="tag tag-outline">{{ framework }}</span>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="job-card-actions">
+    <a href="{{ job.url }}" class="btn btn-outline">View role</a>
+    {% if job.data.apply_url %}
+    <a href="{{ job.data.apply_url }}" class="btn btn-primary" target="_blank" rel="noopener">Apply</a>
+    {% endif %}
+  </div>
+</article>

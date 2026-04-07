@@ -1,0 +1,47 @@
+---
+layout: layouts/base.njk
+title: Open GRC Engineering Roles
+permalink: /jobs/index.html
+description: A GRC Engineering Club community resource for browsing open GRC engineering roles alongside the member directory.
+---
+<section class="jobs-hero">
+  <div class="jobs-hero-inner">
+    <p class="jobs-kicker">Jobs</p>
+    <h1>Open GRC Engineering Roles</h1>
+    <p class="jobs-hero-copy">A community resource from the GRC Engineering Club for exploring open GRC engineering roles alongside the member directory. Each role is tagged to the same frameworks and skill areas used in engineer profiles, so it is easier to compare jobs and people in one place.</p>
+    <div class="hero-stats jobs-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">{{ collections.jobs.length }}</span> Open roles
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">{{ collections.jobs | uniqueValues("specializations") | length }}</span> Specializations
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">{{ collections.jobs | uniqueValues("sources") | length }}</span> Sources
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include "partials/job-filter-bar.njk" %}
+
+<section class="directory jobs-directory">
+  <p class="results-count" aria-live="polite" aria-atomic="true"><span id="results-count">{{ collections.jobs.length }}</span> jobs</p>
+
+  {% if collections.jobs.length %}
+  <div class="card-grid">
+    {% for job in collections.jobs %}
+      {% include "partials/job-card.njk" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="jobs-empty">
+    <h2>No jobs imported yet</h2>
+    <p>Run <code>npm run import:jobs</code> to pull in roles from the curated ATS board list. The board is automation-first and currently relies on public Greenhouse and Ashby sources.</p>
+  </div>
+  {% endif %}
+
+  <p id="no-results" class="no-results" style="display:none" aria-live="polite">No jobs match your filters yet. Try removing a filter or broadening the search.</p>
+</section>
+
+<script src="/site/assets/js/jobs-search.js"></script>

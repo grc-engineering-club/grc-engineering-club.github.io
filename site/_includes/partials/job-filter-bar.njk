@@ -1,0 +1,78 @@
+<div class="filters">
+  <div class="search-box">
+    <input type="text" id="search-input" placeholder="Search by title, company, location, framework..." aria-label="Search jobs">
+  </div>
+
+  <div id="active-filters-summary" class="active-filters-summary" style="display:none">
+    <span class="active-filters-label">Filters:</span>
+    <div id="active-filter-pills" class="active-filter-pills"></div>
+    <button id="clear-filters" class="btn-clear">Clear all</button>
+  </div>
+
+  <div class="filter-groups">
+    <div class="filter-group" data-group="specializations">
+      <button class="filter-group-header" aria-expanded="false">
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Specializations</span>
+        <span class="count-badge" style="display:none">0</span>
+      </button>
+      <div class="filter-chips" data-filter="specializations">
+        {% for spec in collections.jobs | uniqueValues("specializations") %}
+        <button class="chip" data-value="{{ spec | lower }}" aria-pressed="false">{{ spec }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="filter-group" data-group="frameworks">
+      <button class="filter-group-header" aria-expanded="false">
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Frameworks</span>
+        <span class="count-badge" style="display:none">0</span>
+      </button>
+      <div class="filter-chips" data-filter="frameworks">
+        {% for fw in collections.jobs | uniqueValues("frameworks") %}
+        <button class="chip" data-value="{{ fw | lower }}" aria-pressed="false">{{ fw }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="filter-group" data-group="workModes">
+      <button class="filter-group-header" aria-expanded="false">
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Work Mode</span>
+        <span class="count-badge" style="display:none">0</span>
+      </button>
+      <div class="filter-chips" data-filter="workModes">
+        {% for mode in collections.jobs | uniqueValues("work_modes") %}
+        <button class="chip" data-value="{{ mode | lower }}" aria-pressed="false">{{ mode }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="filter-group" data-group="jobTypes">
+      <button class="filter-group-header" aria-expanded="false">
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Job Type</span>
+        <span class="count-badge" style="display:none">0</span>
+      </button>
+      <div class="filter-chips" data-filter="jobTypes">
+        {% for type in collections.jobs | uniqueValues("job_types") %}
+        <button class="chip" data-value="{{ type | lower }}" aria-pressed="false">{{ type }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="filter-group" data-group="sources">
+      <button class="filter-group-header" aria-expanded="false">
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Source</span>
+        <span class="count-badge" style="display:none">0</span>
+      </button>
+      <div class="filter-chips" data-filter="sources">
+        {% for source in collections.jobs | uniqueValues("sources") %}
+        <button class="chip" data-value="{{ source | lower }}" aria-pressed="false">{{ source }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>

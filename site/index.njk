@@ -22,6 +22,8 @@ permalink: /index.html
   </div>
 </section>
 
+{% set activeJobs = collections.jobs %}
+
 {% include "partials/filter-bar.njk" %}
 
 <section class="directory">
@@ -32,6 +34,29 @@ permalink: /index.html
     {% endfor %}
   </div>
   <p id="no-results" class="no-results" style="display:none" aria-live="polite">No engineers match your filters. Try removing a filter or broadening your search.</p>
+</section>
+
+<section class="jobs-preview">
+  <div class="jobs-preview-header">
+    <div>
+      <p class="jobs-kicker">Open Roles</p>
+      <h2>Open GRC Engineering Roles</h2>
+      <p class="jobs-preview-copy">A community resource from the GRC Engineering Club that surfaces open GRC engineering roles alongside the member directory, using curated ATS imports.</p>
+    </div>
+    <a href="/jobs/" class="btn btn-outline">Browse jobs</a>
+  </div>
+
+  {% if activeJobs.length %}
+  <div class="card-grid jobs-preview-grid">
+    {% for job in activeJobs %}
+      {% if loop.index0 < 3 %}
+        {% include "partials/job-card.njk" %}
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="jobs-preview-empty">No jobs have been imported yet. Run <code>npm run import:jobs</code> to populate the board from free sources.</p>
+  {% endif %}
 </section>
 
 <section class="insights">
