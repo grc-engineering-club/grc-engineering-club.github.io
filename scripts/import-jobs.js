@@ -359,6 +359,27 @@ function formatCompensation(min, max, currency) {
   return minValue || maxValue;
 }
 
+function extractCompensation(text) {
+  const plain = stripHtml(text);
+  // Match: $NNN,NNN(.NN) or $NNNk, optional currency, separator, then same pattern
+  const pattern = /\$\s*([\d,]+(?:\.\d{1,2})?)\s*([kK])?\s*(?:USD|CAD|EUR|GBP)?\s*(?:-|–|—|\bto\b|\band\b)\s*\$\s*([\d,]+(?:\.\d{1,2})?)\s*([kK])?\s*(?:USD|CAD|EUR|GBP)?/;
+  const match = plain.match(pattern);
+  if (!match) return "";
+
+  let min = parseFloat(match[1].replace(/,/g, ""));
+  let max = parseFloat(match[3].replace(/,/g, ""));
+  if (match[2]) min *= 1000;
+  if (match[4]) max *= 1000;
+
+  if (min < 20000 || max < 20000 || max > 2000000) return "";
+  if (max < min) return "";
+
+  const currencyMatch = plain.slice(match.index, match.index + match[0].length + 20).match(/\b(CAD|EUR|GBP)\b/);
+  const currency = currencyMatch ? currencyMatch[1] : "USD";
+
+  return formatCompensation(min, max, currency);
+}
+
 function serializeJob(job) {
   const frontmatter = [
     "---",
@@ -424,10 +445,13 @@ function buildNormalizedJob(job) {
   const frameworks = collectMatches(content, FRAMEWORK_RULES, 5);
   const languages = collectMatches(content, LANGUAGE_RULES, 5);
 
+  const compensation = job.compensation || extractCompensation(job.body || "");
+
   return Object.assign({}, job, {
     specializations,
     frameworks,
     languages,
+    compensation,
     summary: excerpt(job.summary || job.body || "", 180)
   });
 }
@@ -603,6 +627,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  extractCompensation,
   htmlToMarkdown,
   looksRelevant
 };
