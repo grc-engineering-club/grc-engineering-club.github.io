@@ -9,8 +9,8 @@ sources:
 source_url: "https://boards-api.greenhouse.io/v1/boards/fireblocks/jobs?content=true"
 role_url: "https://job-boards.greenhouse.io/fireblocks/jobs/4620939006"
 apply_url: "https://job-boards.greenhouse.io/fireblocks/jobs/4620939006"
-posted_date: "2026-03-31"
-expires_date: "2026-04-30"
+posted_date: "2026-04-07"
+expires_date: "2026-05-07"
 location: "Tel Aviv-Yafo, Tel Aviv District, Israel"
 work_modes:
   - "Hybrid / On-site"
