@@ -9,8 +9,8 @@ sources:
 source_url: "https://api.ashbyhq.com/posting-api/job-board/monarchmoney?includeCompensation=true"
 role_url: "https://jobs.ashbyhq.com/monarchmoney/45ce8f3e-1278-4a44-8f92-fed595a6ad1a"
 apply_url: "https://jobs.ashbyhq.com/monarchmoney/45ce8f3e-1278-4a44-8f92-fed595a6ad1a/application"
-posted_date: "2026-04-07"
-expires_date: "2026-05-07"
+posted_date: "2026-04-08"
+expires_date: "2026-05-08"
 location: "Remote (US)"
 work_modes:
   - "Remote"
@@ -44,7 +44,7 @@ Join us on our mission to transform lives by simplifying money, together.
 
 The Role:
 
-Monarch is seeking a Security GRC Analyst to join our Security team during a period of growth. Reporting directly to the Head of Software Infrastructure, you will take point on scaling our compliance program and customer security assurance function; enabling the company to respond to increasing inbound partnership opportunities, onboard vendors safely, and maintain compliance without consuming engineering time. We have a solid foundation (SOC2 Type 2 certified (https://www.reddit.com/r/MonarchMoney/comments/1qj7r1w/monarch_is_officially_soc2_type_2_certified/)), but no dedicated owner within the team. You'll own the day-to-day while building the tooling and workflows to handle increasing volume as we grow.
+Monarch is seeking a Security GRC Analyst (Senior/Staff) to join our Security team during a period of growth. Reporting directly to the Head of Software Infrastructure, you will take point on scaling our compliance program and customer security assurance function; enabling the company to respond to increasing inbound partnership opportunities, onboard vendors safely, and maintain compliance without consuming engineering time. We have a solid foundation (SOC2 Type 2 certified (https://www.reddit.com/r/MonarchMoney/comments/1qj7r1w/monarch_is_officially_soc2_type_2_certified/)), but no dedicated owner within the team. You'll own the day-to-day while building the tooling and workflows to handle increasing volume as we grow.
 
 What You’ll Do:
 
@@ -56,7 +56,7 @@ What You’ll Do:
 
 What You’ll Bring:
 
-- 3-5 years operating and scaling mature GRC, compliance, or customer assurance programs in high-growth environments.
+- 5+ years operating and scaling mature GRC, compliance, or customer assurance programs in high-growth environments.
 - Hands-on experience with customer assurance (security questionnaires, evidence requests, RFPs).
 - Hands-on experience with SOC2, CCPA/GDPR compliance and understanding of other frameworks (e.g. ISO 27001).
 - Hands-on experience with Continuous Controls Monitoring and compliance automation tools (Vanta, Drata, Oneleet, SafeBase, or similar).
@@ -71,7 +71,7 @@ Nice to Haves:
 - Experience in a high-growth startup environment within B2B SaaS.
 - Experience leveraging AI tools (Claude, ChatGPT) for GRC workflows.
 - Relevant certifications (CISA, CRISC, Security+).
-- Experience partnering with IT to implement Corporate Security controls over SaaS, identity and access management (IAM), and endpoint security. #LI-DNI
+- Experience partnering with IT to implement Corporate Security controls over SaaS, identity and access management (IAM), and endpoint security.
 
 ### Benefits :
 
