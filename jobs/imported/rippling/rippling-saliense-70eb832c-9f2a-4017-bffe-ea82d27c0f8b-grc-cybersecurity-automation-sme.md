@@ -11,9 +11,9 @@ role_url: "https://ats.rippling.com/saliense/jobs/70eb832c-9f2a-4017-bffe-ea82d2
 apply_url: "https://ats.rippling.com/saliense/jobs/70eb832c-9f2a-4017-bffe-ea82d27c0f8b"
 posted_date: "2026-04-03"
 expires_date: "2026-05-03"
-location: "Arlington, VA"
+location: "Remote (United States)"
 work_modes:
-  - "Hybrid / On-site"
+  - "Remote"
 job_types:
   - "Full-time"
 specializations:

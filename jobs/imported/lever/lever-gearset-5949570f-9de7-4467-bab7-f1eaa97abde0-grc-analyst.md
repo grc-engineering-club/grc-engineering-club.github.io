@@ -60,7 +60,7 @@ This is a fantastic opportunity to kickstart or progress your career in Governan
 
 - Knowledge of ISO 27001, GDPR, CCPA and HIPAA - Experience using GRC or workflow tools - An interest in DevOps or the Salesforce ecosystem
 
-### Benefits (the stuff you’d expect!)
+### Salary and Benefits (the stuff you’d expect!)
 
 - Salary is up to £45k (depending on experience)
 

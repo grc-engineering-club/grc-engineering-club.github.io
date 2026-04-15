@@ -11,9 +11,9 @@ role_url: "https://ats.rippling.com/saliense/jobs/bb95f524-4aa0-43a6-81e7-d211fe
 apply_url: "https://ats.rippling.com/saliense/jobs/bb95f524-4aa0-43a6-81e7-d211fe066bb1"
 posted_date: "2026-04-03"
 expires_date: "2026-05-03"
-location: "McLean, VA"
+location: "Remote (United States)"
 work_modes:
-  - "Hybrid / On-site"
+  - "Remote"
 job_types:
   - "Full-time"
 specializations:
