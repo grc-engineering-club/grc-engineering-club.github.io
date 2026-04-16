@@ -125,4 +125,4 @@ PREFERRED ADDITIONAL QUALIFICATIONS
 
 EXPANSIA is an Equal Opportunity Employer. All qualified applicants will receive consideration for employment without regard to race, color, religion, sex, pregnancy, sexual orientation, age, national origin, disability, status as a protected veteran, or any other protected characteristic.
 
-Please mention the word **NEATEST** and tag RMjYwMDoxOTAwOjA6MzUwNDo6MTUwMA== when applying to show you read the job post completely (#RMjYwMDoxOTAwOjA6MzUwNDo6MTUwMA==). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.
+Please mention the word **NEATEST** and tag RMjMuODQuODkuMjAw when applying to show you read the job post completely (#RMjMuODQuODkuMjAw). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.

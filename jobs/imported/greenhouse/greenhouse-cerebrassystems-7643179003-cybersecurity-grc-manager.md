@@ -9,8 +9,8 @@ sources:
 source_url: "https://boards-api.greenhouse.io/v1/boards/cerebrassystems/jobs?content=true"
 role_url: "https://job-boards.greenhouse.io/cerebrassystems/jobs/7643179003"
 apply_url: "https://job-boards.greenhouse.io/cerebrassystems/jobs/7643179003"
-posted_date: "2026-04-02"
-expires_date: "2026-05-02"
+posted_date: "2026-04-15"
+expires_date: "2026-05-15"
 location: "Sunnyvale CA or Toronto Canada"
 work_modes:
   - "Hybrid / On-site"

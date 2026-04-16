@@ -9,8 +9,8 @@ sources:
 source_url: "https://boards-api.greenhouse.io/v1/boards/anthropic/jobs?content=true"
 role_url: "https://job-boards.greenhouse.io/anthropic/jobs/5160757008"
 apply_url: "https://job-boards.greenhouse.io/anthropic/jobs/5160757008"
-posted_date: "2026-04-01"
-expires_date: "2026-05-01"
+posted_date: "2026-04-15"
+expires_date: "2026-05-15"
 location: "San Francisco, CA | New York City, NY | Seattle, WA; Washington, DC"
 work_modes:
   - "Hybrid / On-site"
@@ -50,7 +50,7 @@ summary: "About Anthropic Anthropic’s mission is to create reliable, interpret
 </ul>
 <h2><strong>You may be a good fit if you:</strong></h2>
 <ul>
-<li>Have 5+ years of progressive experience in compliance roles, including direct ownership of a HIPAA compliance program at a technology company</li>
+<li>Have 3+ years of progressive experience in compliance roles, including direct ownership of a HIPAA compliance program at a technology company</li>
 <li>Have evaluated PHI data flows and infrastructure boundaries in cloud-native environments (AWS, GCP, or Azure) and can assess HIPAA exposure without always needing to escalate to legal</li>
 <li>Have designed and operated a compliance review mechanism integrated into a product development or release process</li>
 <li>Can translate HIPAA technical compliance requirements into actionable workstreams for engineering and product teams</li>
@@ -73,7 +73,7 @@ summary: "About Anthropic Anthropic’s mission is to create reliable, interpret
 </li>
 </ul>
 <p><strong>Deadline to Apply:&nbsp;</strong>None, applications will be received on a rolling basis.</p><div class="content-pay-transparency"><div class="pay-input"><div class="description"><p>The annual compensation range for this role is listed below.&nbsp;</p>
-<p>For sales roles, the range provided is the role’s On Target Earnings ("OTE") range, meaning that the range includes both the sales commissions/sales bonuses target and annual base salary for the role.</p></div><div class="title">Annual Salary:</div><div class="pay-range"><span>$255,000</span><span class="divider">&mdash;</span><span>$270,000 USD</span></div></div></div><div class="content-conclusion"><h2><strong>Logistics</strong></h2>
+<p>For sales roles, the range provided is the role’s On Target Earnings ("OTE") range, meaning that the range includes both the sales commissions/sales bonuses target and annual base salary for the role.</p></div><div class="title">Annual Salary:</div><div class="pay-range"><span>$255,000</span><span class="divider">&mdash;</span><span>$255,000 USD</span></div></div></div><div class="content-conclusion"><h2><strong>Logistics</strong></h2>
 <p><strong>Minimum education: </strong>Bachelor’s degree or an equivalent combination of education, training, and/or experience</p>
 <p><strong>Required field of study:&nbsp;</strong>A field relevant to the role as demonstrated through coursework, training, or professional experience</p>
 <p><strong>Minimum years of experience: </strong>Years of experience required will correlate with the internal job level requirements for the position</p>
