@@ -11,7 +11,7 @@ role_url: "https://ats.rippling.com/wwwcarbon3aicareers/jobs/9c0d8cc1-250a-487f-
 apply_url: "https://ats.rippling.com/wwwcarbon3aicareers/jobs/9c0d8cc1-250a-487f-8f8e-49cf4d096254"
 posted_date: "2026-03-10"
 expires_date: "2026-04-09"
-location: "London (Hybrid) | United Kingdom - Hybrid (Visit to London office required) "
+location: "United Kingdom - Hybrid (Visit to London office required) "
 work_modes:
   - "Hybrid / On-site"
 job_types:
